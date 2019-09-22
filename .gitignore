@@ -1,0 +1,18 @@
+# Ignore everything
+*
+
+# But not these files:
+!*.md
+!*.c
+!*.h
+!*.s
+!*.sh
+!makefile
+!*.gitignore
+!*.png
+
+
+# ...even if they are in subdirectories
+!*/
+
+# Specifically ignore:
