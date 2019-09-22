@@ -7,14 +7,14 @@ We will use Newton's method to practice programming with POSIX threads.
 ## Timeline for Assignments 2
 > Assignments 2 and 3 and include the implementation of one program and the writing of one report. Here is a suggested timeline:
 
-> - Day 1: List concepts from the lecture and Assignments 0 and 1 that appear useful or related to the assignment. This can yield a sketch of the report.
-> - Day 1 and 2: Discuss the program layout and split it into subtasks. This can contribute to the sketch of the report.
-> - Day 2 and 3: Implement the layout. Do layout ideas work out?
-> - Day 3 to 5: Implement subtasks and revisit layout accordingly.
-> - Day 5: Achieve a functional program. What about performance?
-> - Day 4 and 5: Improve report with everything learned so far. Submit!
-> - Day 6: Read and assess reports from others. Any ideas that you have not yet thought of, but that would help to improve your program?
-> - Day 7 to 10: Identify which parts of your program are slowest and improve them. Repeat until done. It is normal that “polishing” programs takes such a large share of the development time.
+> - [ ] Day 1: List concepts from the lecture and Assignments 0 and 1 that appear useful or related to the assignment. This can yield a sketch of the report.
+> - [ ] Day 1 and 2: Discuss the program layout and split it into subtasks. This can contribute to the sketch of the report.
+> - [ ] Day 2 and 3: Implement the layout. Do layout ideas work out?
+> - [ ] Day 3 to 5: Implement subtasks and revisit layout accordingly.
+> - [ ] Day 5: Achieve a functional program. What about performance?
+> - [ ] Day 4 and 5: Improve report with everything learned so far. Submit!
+> - [ ] Day 6: Read and assess reports from others. Any ideas that you have not yet thought of, but that would help to improve your program?
+> - [ ] Day 7 to 10: Identify which parts of your program are slowest and improve them. Repeat until done. It is normal that “polishing” programs takes such a large share of the development time.
 
 
 # Report Template
