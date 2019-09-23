@@ -52,3 +52,13 @@ As for the writing to file, we have identified ***INSERT*** independent
 subtasks. ***INSERT***
 
 ***CONTINUE BY FURTHER SPLITTING UP THE TWO TASKS***
+
+# Questions
+
+1. > Newton iteration does not converge for all points. To accomodate this, abort iteration if x_i is closer than 10^-3 to the origin, or if the absolute value of its real or imaginary part is bigger than 10^10. **In the pictures treat these cases as if there was an additional zero of f(x) to which these iterations converge.**???
+1. > One might be tempted to implement the writing as
+   `fprintf(attr_file, "%d %d %d ", COLOR_VALUE0, COLOR_VALUE1, COLOR_VALUE2);`
+   `fprintf(conv_file, "%d %d %d ", GRAY_VALUE, GRAY_VALUE, GRAY_VALUE);`
+   but recall that fprintf is slow; fwrite is a better solution.
+   
+   How to use `fwrite` to write ASCII?
