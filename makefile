@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS = -O0 -Wall
+CFLAGS = -O0 -Wall -pthread
 LIBS = -larb -lflint -lmpfr -lgmp -lpthread
 # Directory to keep object files:
 ODIR = obj
