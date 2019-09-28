@@ -1,9 +1,10 @@
 CC=gcc
 CFLAGS = -O0 -Wall -pthread
-LIBS = -larb -lflint -lmpfr -lgmp -lpthread
+LIBS =  -larb -lflint -lmpfr -lgmp -lpthread
 # Directory to keep object files:
 ODIR = obj
-IDIR = include
+IDIR = -I/home/hpcuser029/local_flint/include -I/home/hpcuser029/local_arb/include
+LDIR = -L/home/hpcuser029/local_flint/lib -L/home/hpcuser029/local_arb/lib
 
 # _DEPS = file.h
 # DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
@@ -13,12 +14,12 @@ all: newton
 
 # Rule to generate object files:
 $(ODIR)/%.o: %.c
-	$(CC) -c -o $@ $< $(CFLAGS) #-I$(IDIR)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 newton: $(ODIR)/newton.o
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(IDIR) $(LDIR) $(LIBS)
 
 
 .PHONY: clean # Avoid conflict with a file of the same name
 clean:
-	rm -f $(ODIR)/*.o newton
+	rm -rvf $(ODIR)/*.o newton attractor.ppm convergence.ppm 
