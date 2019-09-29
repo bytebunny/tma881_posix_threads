@@ -57,19 +57,22 @@ void newton2(double x_im, double x_re, int* attractor, int* convergence)
 
     double delta1_re = x_re - r1_re;
     double delta1_im = x_im - r1_im;
-    double delta2_re = x_re - r2_re;
-    double delta2_im = x_im - r2_im;
-
     if ( (delta1_re*delta1_re + delta1_im*delta1_im) < 0.000001 ) { //converged to root1
       *attractor = 0;
       *convergence = iter;
       break;
-    } else if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
+    }
+
+    double delta2_re = x_re - r2_re;
+    double delta2_im = x_im - r2_im;
+    if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
       *attractor = 1;
       *convergence = iter;
       break;
-    } else if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
-                ( x_re > 10000000000 || x_im > 10000000000 ) ) { //real or imaginary part larger than 10^10
+    }
+    
+    if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
+         ( x_re > 10000000000 || x_im > 10000000000 ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       *convergence = iter;
       break;
@@ -101,25 +104,30 @@ void newton3(double x_im, double x_re, int* attractor, int* convergence)
 
     double delta1_re = x_re - r1_re;
     double delta1_im = x_im - r1_im;
-    double delta2_re = x_re - r2_re;
-    double delta2_im = x_im - r2_im;
-    double delta3_re = x_re - r3_re;
-    double delta3_im = x_im - r3_im;
-
     if ( (delta1_re*delta1_re + delta1_im*delta1_im) < 0.000001 ) { //converged to root1
       *attractor = 0;
       *convergence = iter;
       break;
-    } else if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
+    }
+    
+    double delta2_re = x_re - r2_re;
+    double delta2_im = x_im - r2_im;
+    if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
       *attractor = 1;
       *convergence = iter;
       break;
-    } else if ( (delta3_re*delta3_re + delta3_im*delta3_im) < 0.000001 ) { //converged to root3
+    }
+
+    double delta3_re = x_re - r3_re;
+    double delta3_im = x_im - r3_im;
+    if ( (delta3_re*delta3_re + delta3_im*delta3_im) < 0.000001 ) { //converged to root3
       *attractor = 2;
       *convergence = iter;
       break;
-    } else if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
-                ( x_re > 10000000000 || x_im > 10000000000 ) ) { //real or imaginary part larger than 10^10
+    }
+     
+    if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
+         ( x_re > 10000000000 || x_im > 10000000000 ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       *convergence = iter;
       break;
