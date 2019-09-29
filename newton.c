@@ -192,10 +192,11 @@ int main(int argc, char *argv[])
   fprintf(atrfile, "P3\n");
   fprintf(atrfile, "%d %d \n", pic_size, pic_size);
   fprintf(atrfile,"255\n");
+  char output[13];
+  unsigned short index;
   for ( size_t ix = 0; ix < pic_size; ++ix ) {
     for ( size_t jx = 0; jx < pic_size; ++jx ) {
-      char output[13];
-      unsigned short index = 3*attractor[ix][jx];
+      index = 3*attractor[ix][jx];
       sprintf(output, "%.3d %.3d %.3d ", atrColorMap[index], atrColorMap[index+1], atrColorMap[index+2]);
       fwrite(output, sizeof(char), sizeof(output), atrfile);
     }
@@ -207,10 +208,10 @@ int main(int argc, char *argv[])
   fprintf(convfile, "P3\n");
   fprintf(convfile, "%d %d \n", pic_size, pic_size);
   fprintf(convfile,"255\n");
+  unsigned short greyDegree;
   for ( size_t ix = 0; ix < pic_size; ++ix ) {
     for ( size_t jx = 0; jx < pic_size; ++jx ) {
-      char output[13];
-      unsigned short greyDegree = 255 * convergence[ix][jx] / (10*exponent);
+      greyDegree = 255 * convergence[ix][jx] / (10*exponent);
       sprintf(output, "%.3d %.3d %.3d ", greyDegree, greyDegree, greyDegree);
       //printf("%s\n", output);
       fwrite(output, sizeof(char), sizeof(output), convfile);
