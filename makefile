@@ -3,21 +3,20 @@ CFLAGS = -O0 -Wall -pthread
 LIBS =  -larb -lflint -lmpfr -lgmp -lpthread
 # Directory to keep object files:
 ODIR = obj
-IDIR = -I/home/hpcuser029/local_flint/include -I/home/hpcuser029/local_arb/include
-LDIR = -L/home/hpcuser029/local_flint/lib -L/home/hpcuser029/local_arb/lib
+IDIR = include
 
-# _DEPS = file.h
-# DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+_DEPS = newtonlib.h
+DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 .PHONY: all
 all: newton
 
 # Rule to generate object files:
-$(ODIR)/%.o: %.c
-	$(CC) -c -o $@ $< $(CFLAGS)
+$(ODIR)/%.o: %.c $(DEPS)
+	$(CC) -flto -c -o $@ $< $(CFLAGS) -I$(IDIR)
 
-newton: $(ODIR)/newton.o
-	$(CC) -o $@ $^ $(CFLAGS) $(IDIR) $(LDIR) $(LIBS)
+newton: $(ODIR)/newton.o $(ODIR)/newtonlib.o
+	$(CC) -flto -o $@ $^ $(CFLAGS) $(LIBS)
 
 
 .PHONY: clean # Avoid conflict with a file of the same name
