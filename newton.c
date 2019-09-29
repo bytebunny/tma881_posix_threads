@@ -30,11 +30,8 @@ void newton1(double x_im, double x_re, int* attractor, int* convergence)
       *attractor = 0;
       *convergence = iter;
       break;
-    } else if ( (x_re*x_re + x_im*x_im) < 0.000001 ) { //closer than 0.001 to origin
-      *attractor = 9;
-      *convergence = iter;
-      break;
-    } else if ( x_re > 10000000000 || x_im > 10000000000 ) { //real or imaginary part larger than 10^10
+    } else if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
+                ( x_re > 10000000000 || x_im > 10000000000 ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       *convergence = iter;
       break;
@@ -71,11 +68,8 @@ void newton2(double x_im, double x_re, int* attractor, int* convergence)
       *attractor = 1;
       *convergence = iter;
       break;
-    } else if ( (x_re*x_re + x_im*x_im) < 0.000001 ) { //closer than 0.001 to origin
-      *attractor = 9;
-      *convergence = iter;
-      break;
-    } else if ( x_re > 10000000000 || x_im > 10000000000 ) { //real or imaginary part larger than 10^10
+    } else if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
+                ( x_re > 10000000000 || x_im > 10000000000 ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       *convergence = iter;
       break;
@@ -124,11 +118,8 @@ void newton3(double x_im, double x_re, int* attractor, int* convergence)
       *attractor = 2;
       *convergence = iter;
       break;
-    } else if ( (x_re*x_re + x_im*x_im) < 0.000001 ) { //closer than 0.001 to origin
-      *attractor = 9;
-      *convergence = iter;
-      break;
-    } else if ( x_re > 10000000000 || x_im > 10000000000 ) { //real or imaginary part larger than 10^10
+    } else if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
+                ( x_re > 10000000000 || x_im > 10000000000 ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       *convergence = iter;
       break;
