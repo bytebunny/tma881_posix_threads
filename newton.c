@@ -43,15 +43,18 @@ int main(int argc, char *argv[])
 
 
   //perform newton iterations, attractor and convergence arrays as output
+  double re = 0, im = 0;
   for ( size_t ix = 0; ix < pic_size; ++ix ) {
+    im = 2 - (4./(double)(pic_size-1))*(ix);
     for ( size_t jx = 0; jx < pic_size; ++jx ) {
+      re = -2 + (4./(double)(pic_size-1))*(jx);
       if ( exponent == 1 ) {
-	newton1((double)ix-pic_size/2, (double)jx-pic_size/2, &attractor[ix][jx], &convergence[ix][jx]);
+	newton1(re, im, &attractor[ix][jx], &convergence[ix][jx]);
       } else if ( exponent == 2 ) {
-	newton2((double)ix-pic_size/2, (double)jx-pic_size/2, &attractor[ix][jx], &convergence[ix][jx]);
+	newton2(re, im, &attractor[ix][jx], &convergence[ix][jx]);
       } else if ( exponent == 3 ) {
-	newton3((double)ix-pic_size/2, (double)jx-pic_size/2, &attractor[ix][jx], &convergence[ix][jx]);
-	//printf("real = %d, imaginary = %d \n", (int)ix-pic_size/2, (int)jx-pic_size/2);
+	newton3(re, im, &attractor[ix][jx], &convergence[ix][jx]);
+	//printf("real = %f, imaginary = %f \n", re, im);
 	//printf("attractor: %d \n", attractor[ix][jx]);
 	//printf("convergence: %d \n", convergence[ix][jx]);
       } else {
@@ -62,18 +65,19 @@ int main(int argc, char *argv[])
   }
 
   //create colormap arrays - hardcoded for max 10 colors
-  const int atrColorMap[30] = { 255,0,0, 0,255,0, 0,0,255, 206,128,84, 179,83,64, 111,54,55, 35,51,66, 75,43,49, 5,21,69, 250,180,140};
+  const int atrColorMap[30] = { 158,1,66, 216,62,79, 244,109,67, 253,174,97, 254,224,139, 230,245,152, 171,221,164, 102,194,165, 50,136,189, 94,79,162  };
   FILE *atrfile;
   atrfile = fopen("attractor.ppm","wb");
   fprintf(atrfile, "P3\n");
   fprintf(atrfile, "%d %d \n", pic_size, pic_size);
   fprintf(atrfile,"255\n");
-  char output[13];
   unsigned short index;
+  char output[12];
   for ( size_t ix = 0; ix < pic_size; ++ix ) {
     for ( size_t jx = 0; jx < pic_size; ++jx ) {
       index = 3*attractor[ix][jx];
-      sprintf(output, "%.3d %.3d %.3d ", atrColorMap[index], atrColorMap[index+1], atrColorMap[index+2]);
+      sprintf(output, "%.3d %.3d %.3d", atrColorMap[index], atrColorMap[index+1], atrColorMap[index+2]);
+      output[11] = ' '; //replace the null by space
       fwrite(output, sizeof(char), sizeof(output), atrfile);
     }
   }
@@ -88,8 +92,8 @@ int main(int argc, char *argv[])
   for ( size_t ix = 0; ix < pic_size; ++ix ) {
     for ( size_t jx = 0; jx < pic_size; ++jx ) {
       greyDegree = 255 * convergence[ix][jx] / (10*exponent);
-      sprintf(output, "%.3d %.3d %.3d ", greyDegree, greyDegree, greyDegree);
-      //printf("%s\n", output);
+      sprintf(output, "%.3d %.3d %.3d", greyDegree, greyDegree, greyDegree);
+      output[11] = ' ';
       fwrite(output, sizeof(char), sizeof(output), convfile);
     }
   }

@@ -8,7 +8,7 @@ void mul_cpx(double* a_re, double* a_im,
 
 
 
-void newton1(double x_im, double x_re,
+void newton1(double x_re, double x_im,
              int* attractor, int* convergence)
 {
   //Newton routine for polynomial of degree 1
@@ -38,7 +38,7 @@ void newton1(double x_im, double x_re,
 
 
 
-void newton2(double x_im, double x_re,
+void newton2(double x_re, double x_im,
              int* attractor, int* convergence)
 {
   //Newton routine for polynomial of degree 2
@@ -86,7 +86,7 @@ void newton2(double x_im, double x_re,
 
 
 
-void newton3(double x_im, double x_re,
+void newton3(double x_re, double x_im,
              int* attractor, int* convergence)
 {
   //Newton routine for polynomial of degree 3
