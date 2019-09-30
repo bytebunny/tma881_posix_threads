@@ -3,6 +3,7 @@
 #include <stdlib.h> // memory allocation
 #include <pthread.h>
 #include "newtonlib.h" // Newton routines.
+#include "compute_block.h"
 
 int n_threads, pic_size, exponent, block_size;
 
@@ -28,16 +29,16 @@ int main(int argc, char *argv[])
   }
   block_size = pic_size / n_threads; // NOTE: integer division.
 
-  void *newton_routine; // pointer to the specific newton function;
+  void (*newton_routine)(); // pointer to the specific newton function;
   if ( exponent == 1 ) newton_routine = newton1;
   else if ( exponent == 2) newton_routine = newton2;
   else if ( exponent == 3) newton_routine = newton3;
   else {
     printf("Exponent > 3 is not supported yet. \n");
-    exit(0);
+    exit(1);
   }
   
-//initialize attractor and convergence arrays before writing
+  //initialize attractor and convergence arrays before writing
   //these are just dummy arrays now, filled with random roots now, they should be initialized for each compute thread
   int** attractor = (int**) malloc(sizeof(int*) * pic_size);
   int* atrEntries = (int*) malloc(sizeof(int) * pic_size * pic_size);
@@ -60,40 +61,27 @@ int main(int argc, char *argv[])
     ie = ib + block_size;
     if (tx == n_threads - 1) ie = pic_size; // In case n_threads is not a divisor of pic_size.
     
-    int **arg = malloc( 5 * sizeof(int*) ); // 2: attractor, convergence, newton routine, ib, ie.
-    arg[0] = attractor[ib];
-    arg[1] = convergence[ib];
-    arg[2] = newton_routine;
-    arg[3] = &ib;
-    arg[4] = &ie;
+    int ***arg = malloc( 5 * sizeof(int**) ); // 2: attractor, convergence, newton routine, ib, ie.
+    arg[0] = attractor;
+    arg[1] = convergence;
+    arg[2] = (int**)newton_routine;
+    arg[3] = (int**)ib;
+    arg[4] = (int**)ie;
     
-    if ( return_code = pthread_create( thread_ids[tx], NULL,
-                                       compute_block, (void*)arg ) ){
-      printf("Error creating thread: %d\n", return_code);
+    result_code = pthread_create( &thread_ids[tx], NULL,
+                                  compute_block, (void*)arg );
+    if ( result_code ){
+      printf("Error creating thread: %d\n", result_code);
       exit(1);
     }
   }
   
-
-  //perform newton iterations, attractor and convergence arrays as output
-  double re = 0, im = 0;
-  for ( ix = 0; ix < pic_size; ++ix ) {
-    im = 2 - (4./(double)(pic_size-1))*(ix);
-    for ( jx = 0; jx < pic_size; ++jx ) {
-      re = -2 + (4./(double)(pic_size-1))*(jx);
-      if ( exponent == 1 ) {
-	newton1(re, im, &attractor[ix][jx], &convergence[ix][jx]);
-      } else if ( exponent == 2 ) {
-	newton2(re, im, &attractor[ix][jx], &convergence[ix][jx]);
-      } else if ( exponent == 3 ) {
-	newton3(re, im, &attractor[ix][jx], &convergence[ix][jx]);
-	//printf("real = %f, imaginary = %f \n", re, im);
-	//printf("attractor: %d \n", attractor[ix][jx]);
-	//printf("convergence: %d \n", convergence[ix][jx]);
-      } else {
-	printf("Not implemented.\n");
-	exit(1);
-      }
+  //////////////////////////////// Destroy threads /////////////////////////////
+  for (tx=0; tx < n_threads; ++tx) {
+    result_code = pthread_join( thread_ids[tx], NULL );
+    if ( result_code ) {
+      printf("Error joining thread: %d\n", result_code);
+      exit(1);
     }
   }
 
