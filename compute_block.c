@@ -20,4 +20,5 @@ void *compute_block( void *restrict arg ){
       newton_routine(re, im, &attractor_loc[ix][jx], &convergence_loc[ix][jx]);
     }
   }
+  return NULL;
 }
