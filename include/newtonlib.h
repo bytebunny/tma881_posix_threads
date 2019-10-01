@@ -14,4 +14,22 @@ void *newton2(double x_im, double x_re,
 void *newton3(double x_im, double x_re,
               int* attractor, int* convergence);
 
+void *newton4(double x_im, double x_re,
+              int* attractor, int* convergence);
+
+void *newton5(double x_im, double x_re,
+              int* attractor, int* convergence);
+
+void *newton6(double x_im, double x_re,
+              int* attractor, int* convergence);
+
+void *newton7(double x_im, double x_re,
+              int* attractor, int* convergence);
+
+void *newton8(double x_im, double x_re,
+              int* attractor, int* convergence);
+
+void *newton9(double x_im, double x_re,
+              int* attractor, int* convergence);
+
 #endif
