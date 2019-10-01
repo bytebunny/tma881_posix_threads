@@ -5,7 +5,7 @@ LIBS =  -larb -lflint -lmpfr -lgmp -lpthread
 ODIR = obj
 IDIR = include
 
-_DEPS = newtonlib.h compute_block.h
+_DEPS = newtonlib.h compute_block.h write_block.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 .PHONY: all
@@ -15,7 +15,7 @@ all: newton
 $(ODIR)/%.o: %.c $(DEPS)
 	$(CC) -flto -c -o $@ $< $(CFLAGS) -I$(IDIR)
 
-newton: $(ODIR)/newton.o $(ODIR)/newtonlib.o $(ODIR)/compute_block.o
+newton: $(ODIR)/newton.o $(ODIR)/newtonlib.o $(ODIR)/compute_block.o $(ODIR)/write_block.o 
 	$(CC) -flto -o $@ $^ $(CFLAGS) $(LIBS)
 
 
