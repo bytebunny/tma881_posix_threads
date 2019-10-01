@@ -13,7 +13,7 @@ all: newton
 
 # Rule to generate object files:
 $(ODIR)/%.o: %.c $(DEPS)
-	$(CC) -flto -c -o $@ $< $(CFLAGS) -I$(IDIR)
+	$(CC) -flto -c -o $@ $< -g $(CFLAGS) -I$(IDIR)
 
 newton: $(ODIR)/newton.o $(ODIR)/newtonlib.o $(ODIR)/compute_block.o $(ODIR)/write_block.o 
 	$(CC) -flto -o $@ $^ $(CFLAGS) $(LIBS)

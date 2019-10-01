@@ -58,5 +58,6 @@ void *write_block( void *restrict arg ){
       free(convergence_row);
     }
   }
+  free(item_done_loc);
   return(NULL);
 }
