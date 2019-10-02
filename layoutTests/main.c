@@ -13,6 +13,8 @@ int** attractor;
 int** convergence;
 char* item_done;
 
+int wrt_thds;
+
 pthread_mutex_t mutex_item_done;
 pthread_mutex_t mutex_compute;
 pthread_mutex_t mutex_write_att;
@@ -27,7 +29,6 @@ main(int argc, char* argv[])
   struct timespec ts, tn;
   timespec_get(&ts, TIME_UTC);
 
-  int wrt_thds = 2;
   char* ptr;
   int exponent;
   if (argc == 4) {
@@ -49,6 +50,7 @@ main(int argc, char* argv[])
            "-l#numberOfLines# #degreeOfPolynomial# \n");
     exit(0);
   }
+  wrt_thds = n_threads;
 
   attractor = (int**)malloc(sizeof(int*) * pic_size);
   convergence = (int**)malloc(sizeof(int*) * pic_size);

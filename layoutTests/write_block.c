@@ -20,7 +20,7 @@ extern char* item_done;
 extern int** attractor;
 extern int** convergence;
 extern int header_len;
-extern int n_threads;
+extern int wrt_thds;
 
 void*
 write_block(void* restrict arg)
@@ -48,7 +48,7 @@ write_block(void* restrict arg)
     int output_colors[3 * pic_size];
     char attra_char_colors[12 * pic_size];
 
-    for (; ix < pic_size && item_done_loc[ix]; ix += 2) {
+    for (; ix < pic_size && item_done_loc[ix]; ix += wrt_thds) {
       memcpy(attra_row_loc, attractor[ix], pic_size * sizeof(int));
       int curr_offset = header_len + 12 * pic_size * ix;
 
