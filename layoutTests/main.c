@@ -15,6 +15,7 @@ char* item_done;
 
 pthread_mutex_t mutex_item_done;
 pthread_mutex_t mutex_compute;
+pthread_mutex_t mutex_write;
 
 FILE *pfile, *cfile;
 int header_len;
@@ -64,6 +65,7 @@ main(int argc, char* argv[])
 
   pthread_mutex_init(&mutex_item_done, NULL);
   pthread_mutex_init(&mutex_compute, NULL);
+  pthread_mutex_init(&mutex_write, NULL);
 
   int ret;
   pthread_t threads_write[1];
@@ -81,10 +83,10 @@ main(int argc, char* argv[])
     }
   }
 
-  for (size_t tx = 0; tx < 1; tx++) {
-    // char **args = malloc(sizeof(char *));
-    // args[0] = item_done;
-    if ((ret = pthread_create(threads_write + tx, NULL, write_block, NULL))) {
+  for (size_t tx = 0; tx < n_threads; tx++) {
+    size_t *args = malloc(sizeof(size_t));
+    args[0] = tx;
+    if ((ret = pthread_create(threads_write + tx, NULL, write_block, (void*)args))) {
       printf("Error creating thread: %d\n", ret);
       exit(1);
     }
@@ -103,6 +105,7 @@ main(int argc, char* argv[])
   }
   pthread_mutex_destroy(&mutex_item_done);
   pthread_mutex_destroy(&mutex_compute);
+  pthread_mutex_destroy(&mutex_write);
   fclose(pfile);
 
   free(attractor);
