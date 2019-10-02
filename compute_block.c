@@ -1,12 +1,14 @@
 #include <stdlib.h> // free()
 #include <pthread.h>
+#include "compute_block.h"
+
 
 void *compute_block( void *restrict arg ){
-  size_t offset = ((size_t*)arg)[0];
-  void (*newton_routine)() = (void*)( (size_t*) arg )[1];
-  int** attractor = (int**)( (size_t*) arg )[2];
-  int** convergence = (int**)( (size_t*) arg )[3];
-  char* item_done = (char*)( (size_t*) arg )[4];
+  size_t offset = ( (struct compute*)arg )->thread_number;
+  void* (*newton_routine)(double, double, int*, int*) = ( (struct compute*) arg )->newton_func;
+  int** attractor = ( (struct compute*) arg )->result1;
+  int** convergence = ( (struct compute*) arg )->result2;
+  char* item_done = ( (struct compute*) arg )->completed_items;
   free(arg);
 
   extern int pic_size, n_threads;

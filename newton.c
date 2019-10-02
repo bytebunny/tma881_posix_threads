@@ -9,6 +9,7 @@
 int n_threads, pic_size, exponent;
 pthread_mutex_t item_done_mutex;
 
+
 int main(int argc, char *argv[])
 {
   char *ptr, *ptr2; // pointers to parse input data.
@@ -31,15 +32,15 @@ int main(int argc, char *argv[])
   }
 
   void* (*newton_routine)(double, double, int*, int*); // pointer to the specific newton function;
-  if ( exponent == 1 ) newton_routine = newton1;
-  else if ( exponent == 2) newton_routine = newton2;
-  else if ( exponent == 3) newton_routine = newton3;
-  else if ( exponent == 4) newton_routine = newton4;
-  else if ( exponent == 5) newton_routine = newton5;
-  else if ( exponent == 6) newton_routine = newton6;
-  else if ( exponent == 7) newton_routine = newton7;
-  else if ( exponent == 8) newton_routine = newton8;
-  else if ( exponent == 9) newton_routine = newton9;
+  if ( exponent == 1 ) newton_routine = &newton1;
+  else if ( exponent == 2) newton_routine = &newton2;
+  else if ( exponent == 3) newton_routine = &newton3;
+  else if ( exponent == 4) newton_routine = &newton4;
+  else if ( exponent == 5) newton_routine = &newton5;
+  else if ( exponent == 6) newton_routine = &newton6;
+  else if ( exponent == 7) newton_routine = &newton7;
+  else if ( exponent == 8) newton_routine = &newton8;
+  else if ( exponent == 9) newton_routine = &newton9;
   else {
     printf("Exponent >= 10 is not supported yet. \n");
     exit(1);
@@ -73,12 +74,12 @@ int main(int argc, char *argv[])
 
   pthread_mutex_init( &item_done_mutex, NULL );
   for ( tx = 0;  tx < n_threads;  ++tx ){
-    size_t *arg = malloc( 5 * sizeof(size_t) ); // 5: tx, newton routine, attractor, convergence, item_done.
-    arg[0] = tx;
-    arg[1] = (size_t)newton_routine;
-    arg[2] = (size_t)attractor;
-    arg[3] = (size_t)convergence;
-    arg[4] = (size_t)item_done;
+    struct compute *arg = (struct compute *)malloc( sizeof(struct compute) );
+    arg->thread_number = tx;
+    arg->newton_func = newton_routine;
+    arg->result1 = attractor;
+    arg->result2 = convergence;
+    arg->completed_items = item_done;
     
     result_code = pthread_create( &compute_thread_array[tx], NULL,
                                   compute_block, (void*)arg );
@@ -87,13 +88,13 @@ int main(int argc, char *argv[])
       exit(1);
     }
   }
-  int** arg_write = calloc( 6, sizeof(int*) );
-  arg_write[0] = (int*)item_done;
-  arg_write[1] = (int*)attractor;
-  arg_write[2] = (int*)convergence;
-  arg_write[3] = atrColorMap;
-  arg_write[4] = (int*)atrfile;
-  arg_write[5] = (int*)convfile;
+  struct write *arg_write = (struct write *)malloc( sizeof(struct write) );
+  arg_write->result1 = attractor;
+  arg_write->result2 = convergence;
+  arg_write->completed_items = item_done;
+  arg_write->color_map = atrColorMap;
+  arg_write->result1_file = atrfile;
+  arg_write->result2_file = convfile;
   pthread_create( &write_thread, NULL, write_block, (void*)arg_write );
 
   //////////////////////////////// Destroy threads /////////////////////////////

@@ -3,14 +3,15 @@
 #include <string.h> // memcpy()
 #include <time.h> // nanosleep()
 #include <stdio.h> // FILE *, fwrite()
+#include "write_block.h"
 
 void *write_block( void *restrict arg ){
-  char* item_done = (char*)( (int**) arg )[0];
-  int** attractor = (int**)( (int**) arg )[1];
-  int** convergence = (int**)( (int**) arg )[2];
-  int* atrColorMap = (int*)( (int**) arg )[3];
-  FILE* atrfile = (FILE*)( (int**) arg)[4];
-  FILE* convfile = (FILE*)( (int**) arg)[5];
+  int** attractor = ( (struct write*) arg )->result1;
+  int** convergence = ( (struct write*) arg )->result2;
+  char* item_done = ( (struct write*) arg )->completed_items;
+  int* atrColorMap = ( (struct write*) arg )->color_map;
+  FILE* atrfile = ( (struct write*) arg )->result1_file;
+  FILE* convfile = ( (struct write*) arg )->result2_file;
   free(arg);
 
   extern int pic_size, exponent;
