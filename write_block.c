@@ -13,7 +13,7 @@ void *write_block( void *restrict arg ){
   FILE* convfile = (FILE*)( (int**) arg)[5];
   free(arg);
 
-  extern int pic_size, exponent;
+  extern int pic_size;
   extern pthread_mutex_t item_done_mutex;
 
   char* item_done_loc = (char*) calloc(pic_size, sizeof(char));
@@ -39,6 +39,8 @@ void *write_block( void *restrict arg ){
     for ( ; ix < pic_size && item_done_loc[ix] != 0; ++ix ) {
       int* attractor_row = attractor[ix];
       int* convergence_row = convergence[ix];
+      char* outputRowAtr = (char*) malloc(12*pic_size);
+      char* outputRowConv = (char*) malloc(12*pic_size);
       
       for ( size_t jx = 0; jx < pic_size; ++jx ) {
         // Attractor:
@@ -46,14 +48,17 @@ void *write_block( void *restrict arg ){
         sprintf(output, "%.3d %.3d %.3d", atrColorMap[index], 
                 atrColorMap[index+1], atrColorMap[index+2]);
         output[11] = ' '; //replace the null by space
-        fwrite(output, sizeof(char), sizeof(output), atrfile);
-        
-        // Convergene:
-        greyDegree = 255 * convergence[ix][jx] / (10*exponent);
+	strcat(outputRowAtr, output);
+	
+        // Convergence:
+        greyDegree = 255 * convergence[ix][jx] / 100;
         sprintf(output, "%.3d %.3d %.3d", greyDegree, greyDegree, greyDegree);
         output[11] = ' ';
-        fwrite(output, sizeof(char), sizeof(output), convfile);
+	strcat(outputRowConv, output);
       }
+      fwrite(outputRowAtr, sizeof(char), 12*pic_size, atrfile);
+      fwrite(outputRowConv, sizeof(char), 12*pic_size, convfile);
+
       free(attractor_row);
       free(convergence_row);
     }
