@@ -16,9 +16,20 @@ void *newton1(double x_re, double x_im,
 {
   //Newton routine for polynomial of degree 1
   double r1_re = 1, r1_im = 0;
-  int iter=0;
+  int iter=0, capIter=100;
 
   while (1) {
+    if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
+                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+      *attractor = 9;
+      if ( iter <= capIter ) {
+	*convergence = iter;
+      } else {
+	*convergence = capIter;
+      }
+      break;
+    }
+    
     x_re += -x_re + 1;
     x_im += -x_im;
     ++iter;
@@ -28,18 +39,13 @@ void *newton1(double x_re, double x_im,
 
     if ( (delta_re*delta_re + delta_im*delta_im) < 0.000001 ) { //converged to root1
       *attractor = 0;
-      *convergence = iter;
-      break;
-    } else if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
-                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
-      *attractor = 9;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
-    } 
+    }
   }
   return NULL;
 }
@@ -51,14 +57,27 @@ void *newton2(double x_re, double x_im,
 {
   //Newton routine for polynomial of degree 2
   double r1_re = 1, r1_im = 0, r2_re = -1, r2_im = 0;
-  int iter=0;
+  int iter=0, capIter = 100;
 
   while (1) {
+    
+    if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
+                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+      *attractor = 9;
+      if ( iter <= capIter ) {
+	*convergence = iter;
+      } else {
+	*convergence = capIter;
+      }
+      break;
+    }
+    
     double a_re=0, a_im=0;
     mul_cpx(&a_re, &a_im, x_re, x_im, x_re, x_im);
     double num_re = 0, num_im = 0;
     mul_cpx(&num_re, &num_im, a_re - 1, a_im, 2*x_re, -2*x_im);
     double den = 4*x_re*x_re + 4*x_im*x_im;
+    
     x_re -=  num_re / den;
     x_im -= num_im / den;
     ++iter;
@@ -67,10 +86,10 @@ void *newton2(double x_re, double x_im,
     double delta1_im = x_im - r1_im;
     if ( (delta1_re*delta1_re + delta1_im*delta1_im) < 0.000001 ) { //converged to root1
       *attractor = 0;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -79,24 +98,13 @@ void *newton2(double x_re, double x_im,
     double delta2_im = x_im - r2_im;
     if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
       *attractor = 1;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
-    
-    if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
-         ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
-      *attractor = 9;
-      if ( iter <= 100 ) {
-	*convergence = iter;
-      } else {
-	*convergence = 100;
-      }
-      break;
-    } 
   }
   return NULL;
 }
@@ -108,9 +116,20 @@ void *newton3(double x_re, double x_im,
 {
   //Newton routine for polynomial of degree 3
   double r1_re = 1, r1_im = 0, r2_re = -0.5, r2_im = 0.86603, r3_re = -0.5, r3_im = -0.86606;
-  int iter=0;
+  int iter=0, capIter = 100;
 
   while (1) {
+    if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
+                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+      *attractor = 9;
+      if ( iter <= capIter ) {
+	*convergence = iter;
+      } else {
+	*convergence = capIter;
+      }
+      break;
+    }
+    
     double a_re=0, a_im=0, c_re=0, c_im=0;
     mul_cpx(&a_re, &a_im, x_re, x_im, x_re, x_im);
     mul_cpx(&c_re, &c_im, a_re, a_im, x_re, x_im);
@@ -125,10 +144,10 @@ void *newton3(double x_re, double x_im,
     double delta1_im = x_im - r1_im;
     if ( (delta1_re*delta1_re + delta1_im*delta1_im) < 0.000001 ) { //converged to root1
       *attractor = 0;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -137,10 +156,10 @@ void *newton3(double x_re, double x_im,
     double delta2_im = x_im - r2_im;
     if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
       *attractor = 1;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -149,21 +168,10 @@ void *newton3(double x_re, double x_im,
     double delta3_im = x_im - r3_im;
     if ( (delta3_re*delta3_re + delta3_im*delta3_im) < 0.000001 ) { //converged to root3
       *attractor = 2;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
-      }
-      break;
-    }
-     
-    if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
-         ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
-      *attractor = 9;
-      if ( iter <= 100 ) {
-	*convergence = iter;
-      } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -176,9 +184,20 @@ void *newton4(double x_re, double x_im,
 {
   //Newton routine for polynomial of degree 4
   double r1_re = 1, r1_im = 0, r2_re = 0, r2_im = 1, r3_re = -1, r3_im = 0, r4_re = 0, r4_im = -1;
-  int iter=0;
+  int iter=0, capIter=100;
 
   while (1) {
+    if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
+                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+      *attractor = 9;
+      if ( iter <= capIter ) {
+	*convergence = iter;
+      } else {
+	*convergence = capIter;
+      }
+      break;
+    }
+    
     double a_re=0, a_im=0, b_re=0, b_im=0, c_re=0, c_im=0;
     mul_cpx(&a_re, &a_im, x_re, x_im, x_re, x_im); //x^2
     mul_cpx(&b_re, &b_im, a_re, a_im, a_re, a_im); //x^4
@@ -194,10 +213,10 @@ void *newton4(double x_re, double x_im,
     double delta1_im = x_im - r1_im;
     if ( (delta1_re*delta1_re + delta1_im*delta1_im) < 0.000001 ) { //converged to root1
       *attractor = 0;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -206,10 +225,10 @@ void *newton4(double x_re, double x_im,
     double delta2_im = x_im - r2_im;
     if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
       *attractor = 1;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -218,10 +237,10 @@ void *newton4(double x_re, double x_im,
     double delta3_im = x_im - r3_im;
     if ( (delta3_re*delta3_re + delta3_im*delta3_im) < 0.000001 ) { //converged to root3
       *attractor = 2;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -230,21 +249,10 @@ void *newton4(double x_re, double x_im,
     double delta4_im = x_im - r4_im;
     if ( (delta4_re*delta4_re + delta4_im*delta4_im) < 0.000001 ) { //converged to root4
       *attractor = 3;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
-      }
-      break;
-    }
-     
-    if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
-         ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
-      *attractor = 9;
-      if ( iter <= 100 ) {
-	*convergence = iter;
-      } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -257,9 +265,20 @@ void *newton5(double x_re, double x_im,
 {
   //Newton routine for polynomial of degree 5
   double r1_re = 1, r1_im = 0, r2_re = 0.309017, r2_im = 0.951057, r3_re = -0.809017, r3_im = 0.587785, r4_re = -0.809017, r4_im = -0.587785, r5_re = 0.309017, r5_im = -0.951057;
-  int iter=0;
+  int iter=0, capIter=100;
 
   while (1) {
+    if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
+                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+      *attractor = 9;
+      if ( iter <= capIter ) {
+	*convergence = iter;
+      } else {
+	*convergence = capIter;
+      }
+      break;
+    }
+    
     double a_re=0, a_im=0, b_re=0, b_im=0, d_re=0, d_im=0;
     mul_cpx(&a_re, &a_im, x_re, x_im, x_re, x_im); //x^2
     mul_cpx(&b_re, &b_im, a_re, a_im, a_re, a_im); //x^4
@@ -275,10 +294,10 @@ void *newton5(double x_re, double x_im,
     double delta1_im = x_im - r1_im;
     if ( (delta1_re*delta1_re + delta1_im*delta1_im) < 0.000001 ) { //converged to root1
       *attractor = 0;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -287,10 +306,10 @@ void *newton5(double x_re, double x_im,
     double delta2_im = x_im - r2_im;
     if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
       *attractor = 1;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -299,10 +318,10 @@ void *newton5(double x_re, double x_im,
     double delta3_im = x_im - r3_im;
     if ( (delta3_re*delta3_re + delta3_im*delta3_im) < 0.000001 ) { //converged to root3
       *attractor = 2;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -311,10 +330,10 @@ void *newton5(double x_re, double x_im,
     double delta4_im = x_im - r4_im;
     if ( (delta4_re*delta4_re + delta4_im*delta4_im) < 0.000001 ) { //converged to root4
       *attractor = 3;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -323,21 +342,10 @@ void *newton5(double x_re, double x_im,
     double delta5_im = x_im - r5_im;
     if ( (delta5_re*delta5_re + delta5_im*delta5_im) < 0.000001 ) { //converged to root5
       *attractor = 4;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
-      }
-      break;
-    }
-    
-    if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
-         ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
-      *attractor = 9;
-      if ( iter <= 100 ) {
-	*convergence = iter;
-      } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -350,9 +358,20 @@ void *newton6(double x_re, double x_im,
 {
   //Newton routine for polynomial of degree 6
   double r1_re = 1, r1_im = 0, r2_re = 0.5, r2_im = 0.866025, r3_re = -0.5, r3_im = 0.866025, r4_re = -1, r4_im = 0, r5_re = -0.5, r5_im = -0.866025, r6_re = 0.5, r6_im = -0.866025;
-  int iter=0;
+  int iter=0, capIter=100;
 
   while (1) {
+    if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
+                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+      *attractor = 9;
+      if ( iter <= capIter ) {
+	*convergence = iter;
+      } else {
+	*convergence = capIter;
+      }
+      break;
+    }
+    
     double a_re=0, a_im=0, b_re=0, b_im=0, c_re = 0, c_im = 0, d_re=0, d_im=0;
     mul_cpx(&a_re, &a_im, x_re, x_im, x_re, x_im); //x^2
     mul_cpx(&b_re, &b_im, a_re, a_im, x_re, x_im); //x^3
@@ -369,10 +388,10 @@ void *newton6(double x_re, double x_im,
     double delta1_im = x_im - r1_im;
     if ( (delta1_re*delta1_re + delta1_im*delta1_im) < 0.000001 ) { //converged to root1
       *attractor = 0;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -381,10 +400,10 @@ void *newton6(double x_re, double x_im,
     double delta2_im = x_im - r2_im;
     if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
       *attractor = 1;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -393,10 +412,10 @@ void *newton6(double x_re, double x_im,
     double delta3_im = x_im - r3_im;
     if ( (delta3_re*delta3_re + delta3_im*delta3_im) < 0.000001 ) { //converged to root3
       *attractor = 2;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -405,10 +424,10 @@ void *newton6(double x_re, double x_im,
     double delta4_im = x_im - r4_im;
     if ( (delta4_re*delta4_re + delta4_im*delta4_im) < 0.000001 ) { //converged to root4
       *attractor = 3;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -417,10 +436,10 @@ void *newton6(double x_re, double x_im,
     double delta5_im = x_im - r5_im;
     if ( (delta5_re*delta5_re + delta5_im*delta5_im) < 0.000001 ) { //converged to root5
       *attractor = 4;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -429,21 +448,10 @@ void *newton6(double x_re, double x_im,
     double delta6_im = x_im - r6_im;
     if ( (delta6_re*delta6_re + delta6_im*delta6_im) < 0.000001 ) { //converged to root6
       *attractor = 5;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
-      }
-      break;
-    }
-   
-    if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
-         ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
-      *attractor = 9;
-      if ( iter <= 100 ) {
-	*convergence = iter;
-      } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -456,9 +464,20 @@ void *newton7(double x_re, double x_im,
 {
   //Newton routine for polynomial of degree 7
   double r1_re = 1, r1_im = 0, r2_re = 0.62349, r2_im = 0.781831, r3_re = -0.222521, r3_im = 0.974928, r4_re = -0.900969, r4_im = 0.433884, r5_re = -0.900969, r5_im = -0.433884, r6_re = -0.222521, r6_im = -0.974928, r7_re = 0.62349, r7_im = -0.781831;
-  int iter=0;
+  int iter=0, capIter=100;
 
   while (1) {
+    if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
+                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+      *attractor = 9;
+      if ( iter <= capIter ) {
+	*convergence = iter;
+      } else {
+	*convergence = capIter;
+      }
+      break;
+    }
+    
     double a_re=0, a_im=0, b_re=0, b_im=0, c_re=0, c_im=0, d_re=0, d_im=0;
     mul_cpx(&a_re, &a_im, x_re, x_im, x_re, x_im); //x^2
     mul_cpx(&b_re, &b_im, a_re, a_im, x_re, x_im); //x^3
@@ -475,10 +494,10 @@ void *newton7(double x_re, double x_im,
     double delta1_im = x_im - r1_im;
     if ( (delta1_re*delta1_re + delta1_im*delta1_im) < 0.000001 ) { //converged to root1
       *attractor = 0;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -487,10 +506,10 @@ void *newton7(double x_re, double x_im,
     double delta2_im = x_im - r2_im;
     if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
       *attractor = 1;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -499,10 +518,10 @@ void *newton7(double x_re, double x_im,
     double delta3_im = x_im - r3_im;
     if ( (delta3_re*delta3_re + delta3_im*delta3_im) < 0.000001 ) { //converged to root3
       *attractor = 2;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -511,10 +530,10 @@ void *newton7(double x_re, double x_im,
     double delta4_im = x_im - r4_im;
     if ( (delta4_re*delta4_re + delta4_im*delta4_im) < 0.000001 ) { //converged to root4
       *attractor = 3;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -523,10 +542,10 @@ void *newton7(double x_re, double x_im,
     double delta5_im = x_im - r5_im;
     if ( (delta5_re*delta5_re + delta5_im*delta5_im) < 0.000001 ) { //converged to root5
       *attractor = 4;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -535,10 +554,10 @@ void *newton7(double x_re, double x_im,
     double delta6_im = x_im - r6_im;
     if ( (delta6_re*delta6_re + delta6_im*delta6_im) < 0.000001 ) { //converged to root6
       *attractor = 5;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -547,21 +566,10 @@ void *newton7(double x_re, double x_im,
     double delta7_im = x_im - r7_im;
     if ( (delta7_re*delta7_re + delta7_im*delta7_im) < 0.000001 ) { //converged to root7
       *attractor = 6;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
-      }
-      break;
-    }
-    
-    if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
-         ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
-      *attractor = 9;
-      if ( iter <= 100 ) {
-	*convergence = iter;
-      } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -574,9 +582,20 @@ void *newton8(double x_re, double x_im,
 {
   //Newton routine for polynomial of degree 8
   double r1_re = 1, r1_im = 0, r2_re = 0.707107, r2_im = 0.707107, r3_re = 0, r3_im = 1, r4_re = -0.707107, r4_im = 0.707107, r5_re = -1, r5_im = 0, r6_re = -0.707107, r6_im = -0.707107, r7_re = 0, r7_im = -1, r8_re = 0.707107, r8_im = -0.707107;
-  int iter=0;
+  int iter=0, capIter=100;
 
   while (1) {
+    if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
+                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+      *attractor = 9;
+      if ( iter <= capIter ) {
+	*convergence = iter;
+      } else {
+	*convergence = capIter;
+      }
+      break;
+    }
+    
     double a_re=0, a_im=0, b_re=0, b_im=0, c_re=0, c_im=0, d_re=0, d_im=0, e_re=0, e_im=0;
     mul_cpx(&a_re, &a_im, x_re, x_im, x_re, x_im); //x^2
     mul_cpx(&b_re, &b_im, a_re, a_im, a_re, a_im); //x^4
@@ -594,10 +613,10 @@ void *newton8(double x_re, double x_im,
     double delta1_im = x_im - r1_im;
     if ( (delta1_re*delta1_re + delta1_im*delta1_im) < 0.000001 ) { //converged to root1
       *attractor = 0;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -606,10 +625,10 @@ void *newton8(double x_re, double x_im,
     double delta2_im = x_im - r2_im;
     if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
       *attractor = 1;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -618,10 +637,10 @@ void *newton8(double x_re, double x_im,
     double delta3_im = x_im - r3_im;
     if ( (delta3_re*delta3_re + delta3_im*delta3_im) < 0.000001 ) { //converged to root3
       *attractor = 2;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -630,10 +649,10 @@ void *newton8(double x_re, double x_im,
     double delta4_im = x_im - r4_im;
     if ( (delta4_re*delta4_re + delta4_im*delta4_im) < 0.000001 ) { //converged to root4
       *attractor = 3;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -642,10 +661,10 @@ void *newton8(double x_re, double x_im,
     double delta5_im = x_im - r5_im;
     if ( (delta5_re*delta5_re + delta5_im*delta5_im) < 0.000001 ) { //converged to root5
       *attractor = 4;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -654,10 +673,10 @@ void *newton8(double x_re, double x_im,
     double delta6_im = x_im - r6_im;
     if ( (delta6_re*delta6_re + delta6_im*delta6_im) < 0.000001 ) { //converged to root6
       *attractor = 5;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -666,10 +685,10 @@ void *newton8(double x_re, double x_im,
     double delta7_im = x_im - r7_im;
     if ( (delta7_re*delta7_re + delta7_im*delta7_im) < 0.000001 ) { //converged to root7
       *attractor = 6;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -678,22 +697,11 @@ void *newton8(double x_re, double x_im,
     double delta8_im = x_im - r8_im;
     if ( (delta8_re*delta8_re + delta8_im*delta8_im) < 0.000001 ) { //converged to root8
       *attractor = 7;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
-      } else {
-	*convergence = 100;
-      }
-      break;
-    }
-    
-    if ( (x_re*x_re + x_im*x_im) < 0.000001  || //closer than 0.001 to origin
-         ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
-      *attractor = 9;
-      if ( iter <= 100 ) {
-	*convergence = iter;
-      } else {
-	*convergence = 100;
-      }
+	} else {
+	  *convergence = capIter;
+       }
       break;
     }
   }
@@ -705,9 +713,20 @@ void *newton9(double x_re, double x_im,
 {
   //Newton routine for polynomial of degree 9
   double r1_re = 1, r1_im = 0, r2_re = 0.766044, r2_im = 0.642788, r3_re = 0.173648, r3_im = 0.984808, r4_re = -0.5, r4_im = 0.866025, r5_re = -0.939693, r5_im = 0.34202, r6_re = -0.939693, r6_im = -0.34202, r7_re = -0.5, r7_im = -0.866025, r8_re = 0.173648, r8_im = -0.984808, r9_re = 0.766044, r9_im = -0.642788;
-  int iter=0;
+  int iter=0, capIter=100;
 
   while (1) {
+    if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
+                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+      *attractor = 9;
+      if ( iter <= capIter ) {
+	*convergence = iter;
+      } else {
+	*convergence = capIter;
+      }
+      break;
+    }
+    
     double a_re=0, a_im=0, b_re=0, b_im=0, c_re=0, c_im=0, d_re=0, d_im=0;
     mul_cpx(&a_re, &a_im, x_re, x_im, x_re, x_im); //x^2
     mul_cpx(&b_re, &b_im, a_re, a_im, a_re, a_im); //x^4
@@ -724,10 +743,10 @@ void *newton9(double x_re, double x_im,
     double delta1_im = x_im - r1_im;
     if ( (delta1_re*delta1_re + delta1_im*delta1_im) < 0.000001 ) { //converged to root1
       *attractor = 0;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -736,10 +755,10 @@ void *newton9(double x_re, double x_im,
     double delta2_im = x_im - r2_im;
     if ( (delta2_re*delta2_re + delta2_im*delta2_im) < 0.000001 ) { //converged to root2
       *attractor = 1;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -748,10 +767,10 @@ void *newton9(double x_re, double x_im,
     double delta3_im = x_im - r3_im;
     if ( (delta3_re*delta3_re + delta3_im*delta3_im) < 0.000001 ) { //converged to root3
       *attractor = 2;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -760,10 +779,10 @@ void *newton9(double x_re, double x_im,
     double delta4_im = x_im - r4_im;
     if ( (delta4_re*delta4_re + delta4_im*delta4_im) < 0.000001 ) { //converged to root4
       *attractor = 3;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -772,10 +791,10 @@ void *newton9(double x_re, double x_im,
     double delta5_im = x_im - r5_im;
     if ( (delta5_re*delta5_re + delta5_im*delta5_im) < 0.000001 ) { //converged to root5
       *attractor = 4;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -784,10 +803,10 @@ void *newton9(double x_re, double x_im,
     double delta6_im = x_im - r6_im;
     if ( (delta6_re*delta6_re + delta6_im*delta6_im) < 0.000001 ) { //converged to root6
       *attractor = 5;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -796,10 +815,10 @@ void *newton9(double x_re, double x_im,
     double delta7_im = x_im - r7_im;
     if ( (delta7_re*delta7_re + delta7_im*delta7_im) < 0.000001 ) { //converged to root7
       *attractor = 6;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -808,10 +827,10 @@ void *newton9(double x_re, double x_im,
     double delta8_im = x_im - r8_im;
     if ( (delta8_re*delta8_re + delta8_im*delta8_im) < 0.000001 ) { //converged to root8
       *attractor = 7;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
     }
@@ -820,24 +839,13 @@ void *newton9(double x_re, double x_im,
     double delta9_im = x_im - r9_im;
     if ( (delta9_re*delta9_re + delta9_im*delta9_im) < 0.000001 ) { //converged to root9
       *attractor = 8;
-      if ( iter <= 100 ) {
+      if ( iter <= capIter ) {
 	*convergence = iter;
       } else {
-	*convergence = 100;
+	*convergence = capIter;
       }
       break;
-    }
-       
-    if ( (x_re*x_re + x_im*x_im) < 0.000001  ||  //closer than 0.001 to origin
-	( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
-      *attractor = 9;
-      if ( iter <= 100 ) {
-	*convergence = iter;
-      } else {
-	*convergence = 100;
-      }     
-      break;
-    }
+    }    
   }
   return NULL;
 }
