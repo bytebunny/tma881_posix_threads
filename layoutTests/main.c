@@ -107,6 +107,7 @@ main(int argc, char* argv[])
   pthread_mutex_destroy(&mutex_compute);
   pthread_mutex_destroy(&mutex_write);
   fclose(pfile);
+  fclose(cfile);
 
   free(attractor);
   free(convergence);
