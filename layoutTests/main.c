@@ -1,166 +1,118 @@
-#include <stdio.h>
+#include "helper.h"
 #include <pthread.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
+#include <time.h>
 
-#define IX_M 6
-#define N_THREADS 3 
-#define BLOCK_SIZE (IX_M / N_THREADS)
+int pic_size;
+int n_threads;
 
-int irow[IX_M], icol[IX_M], sum;
-pthread_mutex_t mutex_newton, mutex_write;
-FILE *pfile;
-int totalColor[IX_M][3 * IX_M];
-const char header[] = "P3\n1 1\n255\n";
+int** attractor;
+int** convergence;
+char* item_done;
 
-void *newton(void *arg);
-void *wrpixel(void *arg);
+pthread_mutex_t mutex_item_done;
+pthread_mutex_t mutex_compute;
 
-int main()
+FILE *pfile, *cfile;
+int header_len;
+
+int
+main(int argc, char* argv[])
 {
-    struct timespec ts, tn;
-    timespec_get(&ts, TIME_UTC);
+  struct timespec ts, tn;
+  timespec_get(&ts, TIME_UTC);
 
-    int ret;
-    size_t ix, tx;
-    pthread_t threads_newton[N_THREADS], threads_write[N_THREADS];
-    pthread_mutex_init(&mutex_newton, NULL);
-
-    for (ix = 0; ix < IX_M; ix++)
-    {
-        irow[ix] = ix;
+  char* ptr;
+  int exponent;
+  if (argc == 4) {
+    for (size_t ix = 1; ix < argc - 1;
+         ++ix) { // starts with 1 because 0 is the program name.
+      ptr = strchr(argv[ix], 't');
+      if (ptr)
+        n_threads = strtol(++ptr, NULL, 10);
+      else {
+        ptr = strchr(argv[ix], 'l');
+        pic_size = strtol(++ptr, NULL, 10);
+      }
     }
+    exponent = strtol(argv[argc - 1], NULL, 10);
 
-    for (tx = 0, ix = 0; tx < N_THREADS; tx++, ix += BLOCK_SIZE)
-    {
-        int **arg = malloc(sizeof(int *));
-        arg[0] = irow + ix;
-        if ((ret = pthread_create(threads_newton + tx, NULL, newton, (void *)arg)))
-        {
-            printf("Error creating thread: %d\n", ret);
-            exit(1);
-        }
+    printf("t is %d, l is %d, d is %d\n", n_threads, pic_size, exponent);
+  } else {
+    printf("Missing arguments! Correct syntax is: newton -t#numberOfThreads# "
+           "-l#numberOfLines# #degreeOfPolynomial# \n");
+    exit(0);
+  }
+
+  attractor = (int**)malloc(sizeof(int*) * pic_size);
+  convergence = (int**)malloc(sizeof(int*) * pic_size);
+  item_done = (char*)calloc(pic_size, sizeof(char));
+
+  char header[128];
+  sprintf(header, "P3\n%d %d\n255\n", pic_size, pic_size);
+  header_len = strlen(header);
+  //printf("header len: %d\n",header_len);
+
+  pfile = fopen("attractor.ppm", "wb");
+  fwrite(header, header_len, 1, pfile);
+
+  cfile = fopen("convergence.ppm", "wb");
+  fwrite(header, header_len, 1, cfile);
+
+  pthread_mutex_init(&mutex_item_done, NULL);
+  pthread_mutex_init(&mutex_compute, NULL);
+
+  int ret;
+  pthread_t threads_write[1];
+  pthread_t* threads_compute =
+    (pthread_t*)malloc(sizeof(pthread_t) * n_threads);
+
+  for (size_t tx = 0; tx < n_threads; tx++) {
+    size_t* args = malloc(2 * sizeof(size_t));
+    args[0] = tx;
+    args[1] = exponent;
+    if ((ret = pthread_create(
+           threads_compute + tx, NULL, compute_block, (void*)args))) {
+      printf("Error creating thread: %d\n", ret);
+      exit(1);
     }
+  }
 
-    for (tx = 0; tx < N_THREADS; tx++)
-    {
-        if ((ret = pthread_join(threads_newton[tx], NULL)))
-        {
-            printf("Error joining thread: %d\n", ret);
-        }
+  for (size_t tx = 0; tx < 1; tx++) {
+    // char **args = malloc(sizeof(char *));
+    // args[0] = item_done;
+    if ((ret = pthread_create(threads_write + tx, NULL, write_block, NULL))) {
+      printf("Error creating thread: %d\n", ret);
+      exit(1);
     }
-    pthread_mutex_destroy(&mutex_newton);
+  }
 
-    pthread_mutex_init(&mutex_write, NULL);
-
-    pfile = fopen("file.ppm", "wb");
-    fwrite(header, sizeof(header), 1, pfile);
-
-    for (tx = 0, ix = 0; tx < N_THREADS; tx++, ix += BLOCK_SIZE)
-    {
-        int **arg = malloc(sizeof(int *));
-        arg[0] = irow + ix;
-        if ((ret = pthread_create(threads_write + tx, NULL, wrpixel, (void *)arg)))
-        {
-            printf("Error creating thread: %d\n", ret);
-            exit(1);
-        }
+  for (size_t tx = 0; tx < n_threads; tx++) {
+    if ((ret = pthread_join(threads_compute[tx], NULL))) {
+      printf("Error joining thread: %d\n", ret);
     }
+  }
 
-    for (tx = 0; tx < N_THREADS; tx++)
-    {
-        if ((ret = pthread_join(threads_write[tx], NULL)))
-        {
-            printf("Error joining thread: %d\n", ret);
-        }
+  for (size_t tx = 0; tx < 1; tx++) {
+    if ((ret = pthread_join(threads_write[tx], NULL))) {
+      printf("Error joining thread: %d\n", ret);
     }
+  }
+  pthread_mutex_destroy(&mutex_item_done);
+  pthread_mutex_destroy(&mutex_compute);
+  fclose(pfile);
 
-    pthread_mutex_destroy(&mutex_write);
-    fclose(pfile);
-    timespec_get(&tn, TIME_UTC);
-    double diff = (double)(tn.tv_sec - ts.tv_sec) + ((double)(tn.tv_nsec - ts.tv_nsec) / 1000000000L);
-    printf("Elapsed time: %1.6f ms\n", diff * 1000);
-    return 0;
-}
+  free(attractor);
+  free(convergence);
+  free(item_done);
+  free(threads_compute);
 
-void *newton(void *restrict arg)
-{
-    int line_loc = *(((int **)arg)[0]);
-    free(arg);
-    int color[3];
-    int line_curr;
-    for (size_t iy = 0; iy < BLOCK_SIZE; iy++)
-    {
-        line_curr = line_loc + iy;
-        /*
-        switch (line_curr % 3)
-        {
-        case 0:
-            color[0] = 111;
-            color[1] = 111;
-            color[2] = 111;
-            break;
-        case 1:
-            color[0] = 222;
-            color[1] = 222;
-            color[2] = 222;
-            break;
-        case 2:
-            color[0] = 333;
-            color[1] = 333;
-            color[2] = 333;
-            break;
-        }*/
-        color[0] = line_curr;
-        color[1] = line_curr;
-        color[2] = line_curr;
-
-        for (size_t ix = 0; ix < 3 * IX_M; ix += 3)
-        {
-            pthread_mutex_lock(&mutex_newton);
-            totalColor[line_curr][ix] = color[0];
-            totalColor[line_curr][ix + 1] = color[1];
-            totalColor[line_curr][ix + 2] = color[2];
-            //printf("%d: %d %d %d\n", line_curr, totalColor[line_curr][0], totalColor[line_curr][1], totalColor[line_curr][2]);
-            pthread_mutex_unlock(&mutex_newton);
-        }
-    }
-    return NULL;
-}
-
-void *wrpixel(void *restrict arg)
-{
-    int iy_loc = *(((int **)arg)[0]);
-    free(arg);
-    int c[3];
-    char output[24];
-    char retn[] = "\n";
-    //int spac = 32;
-    int curr_iy;
-    int curr_offset;
-
-    for (size_t iy = 0; iy < BLOCK_SIZE; iy++)
-    {
-        curr_iy = iy_loc + iy;
-        curr_offset = strlen(header) + 12 * sizeof(char) * IX_M * curr_iy;
-        pthread_mutex_lock(&mutex_write);
-        fseek(pfile, curr_offset, SEEK_SET);
-        for (size_t ix = 0; ix < 3 * IX_M; ix++)
-        {
-            c[0] = totalColor[curr_iy][ix];
-            //c[1] = totalColor[curr_iy][ix + 1];
-            //c[2] = totalColor[curr_iy][ix + 2];
-            sprintf(output, "%03d ", c[0]);
-            fwrite(output, 4, 1, pfile);
-            //fflush(pfile);
-        }
-        fseek(pfile, -1, SEEK_CUR);
-        fwrite(retn, strlen(retn), 1, pfile);
-        fflush(pfile);
-        pthread_mutex_unlock(&mutex_write);
-    }
-
-    return NULL;
+  timespec_get(&tn, TIME_UTC);
+  double diff = (double)(tn.tv_sec - ts.tv_sec) +
+                ((double)(tn.tv_nsec - ts.tv_nsec) / 1000000000L);
+  printf("Elapsed time: %1.6f ms\n", diff * 1000);
+  return 0;
 }
