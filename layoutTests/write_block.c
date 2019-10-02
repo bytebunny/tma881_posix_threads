@@ -12,7 +12,8 @@ const int atrColorMap[30] = {
 const char retn[] = "\n";
 
 extern pthread_mutex_t mutex_item_done;
-extern pthread_mutex_t mutex_write;
+extern pthread_mutex_t mutex_write_att;
+extern pthread_mutex_t mutex_write_con;
 extern int pic_size;
 extern FILE *pfile, *cfile;
 extern char* item_done;
@@ -32,8 +33,7 @@ write_block(void* restrict arg)
   int* attra_row_loc = (int*)malloc(pic_size * sizeof(int));
   char* item_done_loc = (char*)calloc(pic_size, sizeof(char));
 
-  for (size_t ix = offset;
-       ix < pic_size;) { // NOTE: emptry increment statement!
+  for (size_t ix = offset; ix < pic_size;) {
     pthread_mutex_lock(&mutex_item_done);
     if (item_done[ix]) // copy data from item_done to item_done_loc:
     {
@@ -45,13 +45,12 @@ write_block(void* restrict arg)
       nanosleep(&sleep_timespec, NULL);
       continue;
     }
-    int curr_offset;
     int output_colors[3 * pic_size];
     char attra_char_colors[12 * pic_size];
 
-    for (; ix < pic_size && item_done_loc[ix]; ix += n_threads) {
+    for (; ix < pic_size && item_done_loc[ix]; ix += 2) {
       memcpy(attra_row_loc, attractor[ix], pic_size * sizeof(int));
-      curr_offset = header_len + 12 * pic_size * ix;
+      int curr_offset = header_len + 12 * pic_size * ix;
 
       // write convergence.ppm
 
@@ -73,13 +72,13 @@ write_block(void* restrict arg)
         // printf("str len: %ld\n", strlen(attra_char_colors));
       }
 
-      pthread_mutex_lock(&mutex_write);
+      pthread_mutex_lock(&mutex_write_att);
       fseek(pfile, curr_offset, SEEK_SET);
       fwrite(attra_char_colors, strlen(attra_char_colors), 1, pfile);
       fseek(pfile, -1, SEEK_CUR);
       fwrite(retn, strlen(retn), 1, pfile);
       fflush(pfile);
-      pthread_mutex_unlock(&mutex_write);
+      pthread_mutex_unlock(&mutex_write_att);
 
       // write convergence.ppm
       memcpy(attra_row_loc, convergence[ix], pic_size * sizeof(int));
@@ -102,13 +101,13 @@ write_block(void* restrict arg)
         // printf("str len: %ld\n", strlen(attra_char_colors));
       }
 
-      pthread_mutex_lock(&mutex_write);
+      pthread_mutex_lock(&mutex_write_con);
       fseek(cfile, curr_offset, SEEK_SET);
       fwrite(attra_char_colors, strlen(attra_char_colors), 1, cfile);
       fseek(cfile, -1, SEEK_CUR);
       fwrite(retn, strlen(retn), 1, cfile);
       fflush(cfile);
-      pthread_mutex_unlock(&mutex_write);
+      pthread_mutex_unlock(&mutex_write_con);
     }
   }
   free(item_done_loc);

@@ -15,7 +15,8 @@ char* item_done;
 
 pthread_mutex_t mutex_item_done;
 pthread_mutex_t mutex_compute;
-pthread_mutex_t mutex_write;
+pthread_mutex_t mutex_write_att;
+pthread_mutex_t mutex_write_con;
 
 FILE *pfile, *cfile;
 int header_len;
@@ -26,6 +27,7 @@ main(int argc, char* argv[])
   struct timespec ts, tn;
   timespec_get(&ts, TIME_UTC);
 
+  int wrt_thds = 2;
   char* ptr;
   int exponent;
   if (argc == 4) {
@@ -55,7 +57,7 @@ main(int argc, char* argv[])
   char header[128];
   sprintf(header, "P3\n%d %d\n255\n", pic_size, pic_size);
   header_len = strlen(header);
-  //printf("header len: %d\n",header_len);
+  // printf("header len: %d\n",header_len);
 
   pfile = fopen("attractor.ppm", "wb");
   fwrite(header, header_len, 1, pfile);
@@ -65,10 +67,11 @@ main(int argc, char* argv[])
 
   pthread_mutex_init(&mutex_item_done, NULL);
   pthread_mutex_init(&mutex_compute, NULL);
-  pthread_mutex_init(&mutex_write, NULL);
+  pthread_mutex_init(&mutex_write_att, NULL);
+  pthread_mutex_init(&mutex_write_con, NULL);
 
   int ret;
-  pthread_t threads_write[1];
+  pthread_t threads_write[wrt_thds];
   pthread_t* threads_compute =
     (pthread_t*)malloc(sizeof(pthread_t) * n_threads);
 
@@ -83,10 +86,11 @@ main(int argc, char* argv[])
     }
   }
 
-  for (size_t tx = 0; tx < n_threads; tx++) {
-    size_t *args = malloc(sizeof(size_t));
+  for (size_t tx = 0; tx < wrt_thds; tx++) {
+    size_t* args = malloc(sizeof(size_t));
     args[0] = tx;
-    if ((ret = pthread_create(threads_write + tx, NULL, write_block, (void*)args))) {
+    if ((ret = pthread_create(
+           threads_write + tx, NULL, write_block, (void*)args))) {
       printf("Error creating thread: %d\n", ret);
       exit(1);
     }
@@ -98,14 +102,15 @@ main(int argc, char* argv[])
     }
   }
 
-  for (size_t tx = 0; tx < 1; tx++) {
+  for (size_t tx = 0; tx < wrt_thds; tx++) {
     if ((ret = pthread_join(threads_write[tx], NULL))) {
       printf("Error joining thread: %d\n", ret);
     }
   }
   pthread_mutex_destroy(&mutex_item_done);
   pthread_mutex_destroy(&mutex_compute);
-  pthread_mutex_destroy(&mutex_write);
+  pthread_mutex_destroy(&mutex_write_att);
+  pthread_mutex_destroy(&mutex_write_con);
   fclose(pfile);
   fclose(cfile);
 
