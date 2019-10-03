@@ -21,4 +21,4 @@ newton: $(ODIR)/newton.o $(ODIR)/newtonlib.o $(ODIR)/compute_block.o $(ODIR)/wri
 
 .PHONY: clean # Avoid conflict with a file of the same name
 clean:
-	rm -rvf $(ODIR)/*.o newton attractor.ppm convergence.ppm 
+	rm -rvf $(ODIR)/*.o newton *.ppm 

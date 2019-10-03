@@ -50,13 +50,17 @@ int main(int argc, char *argv[])
   //create colormap arrays - hardcoded for max 10 colors
   const int atrColorMap[30] = { 158,1,66, 216,62,79, 244,109,67, 253,174,97, 254,224,139, 230,245,152, 171,221,164, 102,194,165, 50,136,189, 94,79,162  };
   FILE *atrfile;
-  atrfile = fopen("attractor.ppm","wb");
+  char filename[25];
+  sprintf(filename, "newton_attractors_x%d.ppm", exponent);
+  atrfile = fopen(filename,"wb");
   fprintf(atrfile, "P3\n");
   fprintf(atrfile, "%d %d \n", pic_size, pic_size);
   fprintf(atrfile,"255\n");
 
   FILE *convfile;
-  convfile = fopen("convergence.ppm","wb");
+  char filename2[26];
+  sprintf(filename2, "newton_convergence_x%d.ppm", exponent);
+  convfile = fopen(filename2,"wb");
   fprintf(convfile, "P3\n");
   fprintf(convfile, "%d %d \n", pic_size, pic_size);
   fprintf(convfile,"255\n");
