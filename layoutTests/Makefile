@@ -14,4 +14,4 @@ newton: $(OBJS)
 $(OBJS) : helper.h
 
 clean:
-	-rm -f *.o newtown 
+	-rm -f *.o *.ppm newtown 

@@ -50,30 +50,35 @@ compute_block(void* restrict arg)
 
   // perform newton iterations, attractor and convergence arrays as output
   double re = 0.0, im = 0.0;
-  for (size_t ix = offset; ix < pic_size; ix += n_threads) {
-    // the following 2 allocations will be freed in write_block.c:
-    int* attractor_row = (int*)malloc(sizeof(int) * pic_size);
-    int* convergence_row = (int*)malloc(sizeof(int) * pic_size);
+  size_t blocksize = 100;
+  for (size_t ib = offset; ib < pic_size; ib += blocksize) {
+    int ie = ib + blocksize < pic_size ? ib + blocksize : pic_size;
 
-    im = 2.0 - (4.0 / (double)(pic_size - 1)) *
-                 ((double)ix); // Convert to [-2; 2] interval.
-    for (size_t jx = 0; jx < pic_size; ++jx) {
-      re = -2.0 + (4. / (double)(pic_size - 1)) * ((double)jx);
-      newton_routine(re, im, attractor_row + jx, convergence_row + jx);
+    for (size_t ix = ib; ix < ie; ix += n_threads) {
+      // the following 2 allocations will be freed in write_block.c:
+      int* attractor_row = (int*)malloc(sizeof(int) * pic_size);
+      int* convergence_row = (int*)malloc(sizeof(int) * pic_size);
+
+      im = 2.0 - (4.0 / (double)(pic_size - 1)) *
+                   ((double)ix); // Convert to [-2; 2] interval.
+      for (size_t jx = 0; jx < pic_size; ++jx) {
+        re = -2.0 + (4. / (double)(pic_size - 1)) * ((double)jx);
+        newton_routine(re, im, attractor_row + jx, convergence_row + jx);
+      }
+      // Save results:
+      pthread_mutex_lock(&mutex_compute);
+      attractor[ix] = attractor_row;
+      convergence[ix] = convergence_row;
+      pthread_mutex_unlock(&mutex_compute);
+      //    printf(
+      //      "attractor: %d, convergence: %d\n", attractor[ix][1],
+      //      convergence[ix][1]);
+
+      // Mark as ready for writing:
+      pthread_mutex_lock(&mutex_item_done);
+      item_done[ix] = 1;
+      pthread_mutex_unlock(&mutex_item_done);
     }
-    // Save results:
-    pthread_mutex_lock(&mutex_compute);
-    attractor[ix] = attractor_row;
-    convergence[ix] = convergence_row;
-    pthread_mutex_unlock(&mutex_compute);
-//    printf(
-//      "attractor: %d, convergence: %d\n", attractor[ix][1], convergence[ix][1]);
-
-    // Mark as ready for writing:
-    pthread_mutex_lock(&mutex_item_done);
-    item_done[ix] = 1;
-    pthread_mutex_unlock(&mutex_item_done);
   }
-
   return (NULL);
 }

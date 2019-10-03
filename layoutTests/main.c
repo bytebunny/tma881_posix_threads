@@ -46,8 +46,7 @@ main(int argc, char* argv[])
 
   char* ptr;
   if (argc == 4) {
-    for (size_t ix = 1; ix < argc - 1;
-         ++ix) { // starts with 1 because 0 is the program name.
+    for (size_t ix = 1; ix < argc - 1; ++ix) {
       ptr = strchr(argv[ix], 't');
       if (ptr)
         n_threads = strtol(++ptr, NULL, 10);
@@ -57,21 +56,16 @@ main(int argc, char* argv[])
       }
     }
     exponent = strtol(argv[argc - 1], NULL, 10);
-  } else {
-    printf("Missing arguments! Correct syntax is: newton -t#numberOfThreads# "
-           "-l#numberOfLines# #degreeOfPolynomial# \n");
-    exit(0);
   }
-  wrt_thds = 2;
 
-  attractor = (int**)malloc(sizeof(int*) * pic_size);
-  convergence = (int**)malloc(sizeof(int*) * pic_size);
+  wrt_thds = 2;
+  attractor = (int**)aligned_alloc(64, sizeof(int*) * pic_size);
+  convergence = (int**)aligned_alloc(64, sizeof(int*) * pic_size);
   item_done = (char*)calloc(pic_size, sizeof(char));
 
   char header[128];
   sprintf(header, "P3\n%d %d\n255\n", pic_size, pic_size);
   header_len = strlen(header);
-  // printf("header len: %d\n",header_len);
 
   pfile = fopen("attractor.ppm", "wb");
   fwrite(header, header_len, 1, pfile);
