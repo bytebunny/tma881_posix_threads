@@ -1,13 +1,11 @@
 #include "helper.h"
-#include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 extern pthread_mutex_t mutex_item_done;
 extern pthread_mutex_t mutex_compute;
+void* (*newton_routine)(double, double, int*, int*);
 extern int pic_size;
 extern int n_threads;
-void* (*newton_routine)(double, double, int*, int*);
+extern int exponent;
 extern int** attractor;
 extern int** convergence;
 extern char* item_done;
@@ -16,9 +14,8 @@ void*
 compute_block(void* restrict arg)
 {
   size_t offset = ((size_t*)arg)[0];
-  size_t expnum = ((size_t*)arg)[1];
   free(arg);
-  switch (expnum) {
+  switch (exponent) {
     case 1:
       newton_routine = &newton1;
       break;

@@ -1,3 +1,11 @@
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <math.h>
+#include <stddef.h>
+
 #ifndef _H_NEWTON // once-only header
 #define _H_NEWTON
 

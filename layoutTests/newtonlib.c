@@ -1,5 +1,4 @@
-#include<stdio.h>
-#include<math.h>
+#include "helper.h"
 
 void mul_cpx(double* a_re, double* a_im,
              double b_re, double b_im,
