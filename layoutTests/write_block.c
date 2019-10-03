@@ -74,7 +74,7 @@ write_block(void* restrict arg)
         // fseek(pfile, -1, SEEK_CUR);
         // fwrite(retn, 1, 1, pfile);
         fflush(pfile);
-        // free(attractor[ix]);
+        free(attractor[ix]);
         pthread_mutex_unlock(&mutex_write_att);
 
         // write convergence.ppm
@@ -107,7 +107,7 @@ write_block(void* restrict arg)
         // fseek(cfile, -1, SEEK_CUR);
         // fwrite(retn, 1, 1, cfile);
         fflush(cfile);
-        // free(convergence[ix]);
+        free(convergence[ix]);
         pthread_mutex_unlock(&mutex_write_con);
       }
     }
