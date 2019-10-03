@@ -19,6 +19,10 @@ newton: $(ODIR)/newton.o $(ODIR)/newtonlib.o $(ODIR)/compute_block.o $(ODIR)/wri
 	$(CC) -flto -o $@ $^ $(CFLAGS) $(LIBS)
 
 
-.PHONY: clean # Avoid conflict with a file of the same name
+.PHONY: test clean # Avoid conflict with a file of the same name
 clean:
-	rm -rvf $(ODIR)/*.o newton *.ppm 
+	rm -rvf $(ODIR)/*.o newton *.ppm newton.tar.gz extracted/ pictures/
+
+test:
+	tar -czvf newton.tar.gz *
+	./check_submission.py newton.tar.gz
