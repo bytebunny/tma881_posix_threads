@@ -26,8 +26,8 @@ const int atrColorMap[30] = {
 int
 main(int argc, char* argv[])
 {
-  struct timespec ts, tn;
-  timespec_get(&ts, TIME_UTC);
+  //struct timespec ts, tn;
+  //timespec_get(&ts, TIME_UTC);
 
   int greyMap[100];
   for (size_t ix = 0; ix < 100; ix++) {
@@ -63,14 +63,16 @@ main(int argc, char* argv[])
   convergence = (int**)aligned_alloc(64, sizeof(int*) * pic_size);
   item_done = (char*)calloc(pic_size, sizeof(char));
 
-  char header[128];
+  char header[64];
   sprintf(header, "P3\n%d %d\n255\n", pic_size, pic_size);
   header_len = strlen(header);
-
-  pfile = fopen("attractor.ppm", "wb");
+  char filname[64];
+  sprintf(filname,"newton_attractors_x%d.ppm",exponent);
+  pfile = fopen(filname, "wb");
   fwrite(header, header_len, 1, pfile);
 
-  cfile = fopen("convergence.ppm", "wb");
+  sprintf(filname,"newton_convergence_x%d.ppm",exponent);
+  cfile = fopen(filname, "wb");
   fwrite(header, header_len, 1, cfile);
 
   pthread_mutex_init(&mutex_item_done, NULL);
@@ -113,11 +115,11 @@ main(int argc, char* argv[])
   free(attractor);
   free(convergence);
   free(item_done);
-
+/*
   timespec_get(&tn, TIME_UTC);
   double diff = (double)(tn.tv_sec - ts.tv_sec) +
                 ((double)(tn.tv_nsec - ts.tv_nsec) / 1000000000L);
   printf("Elapsed time: %1.4f s\n", diff);
-
+*/
   return 0;
 }
