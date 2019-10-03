@@ -107,6 +107,8 @@ int main(int argc, char *argv[])
   }
   pthread_join( write_thread, NULL );
 
+  pthread_mutex_destroy(&item_done_mutex);
+
   fclose(atrfile);
   fclose(convfile);
 
