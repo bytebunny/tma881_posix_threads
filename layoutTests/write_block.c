@@ -12,6 +12,7 @@ extern int** convergence;
 extern int header_len;
 extern int wrt_thds;
 extern char charColor[121];
+extern char charGreyColor[400];
 
 void*
 write_block(void* restrict arg)
@@ -36,7 +37,6 @@ write_block(void* restrict arg)
       nanosleep(&sleep_timespec, NULL);
       continue;
     }
-    int output_colors[3 * pic_size];
     char attra_char_colors[12 * pic_size];
 
     for (; ix < pic_size && item_done_loc[ix]; ix += wrt_thds) {
@@ -78,9 +78,9 @@ write_block(void* restrict arg)
       memcpy(attra_row_loc, convergence[ix], pic_size * sizeof(int));
 
       for (size_t jx = 0; jx < pic_size; jx++) {
-        int color_type = attra_row_loc[jx] % 30;
+        int color_type = attra_row_loc[jx] - 1;
         for (size_t iz = 0; iz < 12; iz++) {
-          attra_char_colors[12 * jx + iz] = charColor[12 * color_type + iz % 4];
+          attra_char_colors[12 * jx + iz] = charGreyColor[4 * color_type + iz % 4];
         }
         // printf("%d %d %d\n",
         //        output_colors[3 * jx],
