@@ -10,7 +10,7 @@
 !makefile
 !*.gitignore
 !*.png
-
+!check_submission.py
 
 # ...even if they are in subdirectories
 !*/
