@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS = -O0 -Wall -pthread
-LIBS =  -larb -lflint -lmpfr -lgmp -lpthread
+CFLAGS = -O3 -Wall -pthread -ffast-math -march=native
+LIBS =  -lpthread
 # Directory to keep object files:
 ODIR = obj
 IDIR = include

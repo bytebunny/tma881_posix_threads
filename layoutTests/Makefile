@@ -1,10 +1,10 @@
 CC := gcc
-CFLAGS := -std=c11 -O2 -Wall -pthread -flto -march=native 
+CFLAGS := -std=c11 -O3 -Wall -pthread -flto
 LIBS := -lpthread
 
 OBJS := main.o newtonlib.o compute_block.o write_block.o
 
-.PHONY: all clean
+.PHONY: all clean test
 all: newton 
 
 # Rule to generate object files:
@@ -14,4 +14,8 @@ newton: $(OBJS)
 $(OBJS) : helper.h
 
 clean:
-	-rm -f *.o *.ppm newton 
+	-rm -rvf *.o *.ppm newton newton.tar.gz extracted/ pictures/
+
+test:
+	tar -czvf newton.tar.gz *.c *.h Makefile
+	./check_submission.py newton.tar.gz
