@@ -17,7 +17,7 @@ We will use Newton's method to practice programming with POSIX threads.
 > - [ ] Day 7 to 10: Identify which parts of your program are slowest and improve them. Repeat until done. It is normal that “polishing” programs takes such a large share of the development time.
 
 
-# Report Template
+# Report
 
 ## Relevant concepts
 
@@ -35,6 +35,12 @@ We will use Newton's method to practice programming with POSIX threads.
 
   We plan to test this concept by comparing runtimes of variants of our program
   using stack and heap allocated memory in the innermost iteration steps.
+
+- **Avoiding power function**. Complicated mathematical operations should be
+  avoided when possible. For example, raising a complex number to some power
+  and comparing the square root of that to some tolerance can be replaced
+  with multiplying out the components explicitly and comparing it to the
+  square of the tolerance, which is a known number.
 
 ***CONTINUE HERE WITH FUTHER CONCEPTS***
 

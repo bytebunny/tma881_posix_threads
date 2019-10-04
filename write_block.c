@@ -60,33 +60,12 @@ void *write_block( void *restrict arg ){
       for ( size_t jx = 0; jx < pic_size; ++jx ) {
         // Attractor:
         int color_type = attractor_row[jx];
-        attra_char_colors[12 * jx] = charColor[12 * color_type];
-        attra_char_colors[12 * jx + 1] = charColor[12 * color_type + 1];
-        attra_char_colors[12 * jx + 2] = charColor[12 * color_type + 2];
-        attra_char_colors[12 * jx + 3] = charColor[12 * color_type + 3];
-        attra_char_colors[12 * jx + 4] = charColor[12 * color_type + 4];
-        attra_char_colors[12 * jx + 5] = charColor[12 * color_type + 5];
-        attra_char_colors[12 * jx + 6] = charColor[12 * color_type + 6];
-        attra_char_colors[12 * jx + 7] = charColor[12 * color_type + 7];
-        attra_char_colors[12 * jx + 8] = charColor[12 * color_type + 8];
-        attra_char_colors[12 * jx + 9] = charColor[12 * color_type + 9];
-        attra_char_colors[12 * jx + 10] = charColor[12 * color_type + 10];
-        attra_char_colors[12 * jx + 11] = charColor[12 * color_type + 11];
+        memcpy(&attra_char_colors[12 * jx], &charColor[12 * color_type], 12*sizeof(char));
 
         color_type = convergence_row[jx] - 1;
-        conv_char_colors[12 * jx] = charGreyColor[4 * color_type];
-        conv_char_colors[12 * jx + 1] = charGreyColor[4 * color_type + 1];
-        conv_char_colors[12 * jx + 2] = charGreyColor[4 * color_type + 2];
-        conv_char_colors[12 * jx + 3] = charGreyColor[4 * color_type + 3];
-        conv_char_colors[12 * jx + 4] = charGreyColor[4 * color_type + 0]; // 0 = 4%4
-        conv_char_colors[12 * jx + 5] = charGreyColor[4 * color_type + 1];
-        conv_char_colors[12 * jx + 6] = charGreyColor[4 * color_type + 2];
-        conv_char_colors[12 * jx + 7] = charGreyColor[4 * color_type + 3];
-        conv_char_colors[12 * jx + 8] = charGreyColor[4 * color_type + 0];
-        conv_char_colors[12 * jx + 9] = charGreyColor[4 * color_type + 1];
-        conv_char_colors[12 * jx + 10] = charGreyColor[4 * color_type + 2];
-        conv_char_colors[12 * jx + 11] = charGreyColor[4 * color_type + 3];
-
+        memcpy(&conv_char_colors[12 * jx], &charGreyColor[12 * color_type], 4*sizeof(char));
+        memcpy(&conv_char_colors[12 * jx + 4], &charGreyColor[12 * color_type], 4*sizeof(char));
+        memcpy(&conv_char_colors[12 * jx + 8], &charGreyColor[12 * color_type], 4*sizeof(char));
       }
       attra_char_colors[12 * pic_size -1] = '\n';
       conv_char_colors[12 * pic_size -1] = '\n';

@@ -20,7 +20,7 @@ void *newton1(double x_re, double x_im,
 
   while (1) {
     if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
-                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+                ( fabs(x_re) > 10000000000. || fabs(x_im) > 10000000000. ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       if ( iter <= capIter ) {
 	*convergence = iter;
@@ -62,7 +62,7 @@ void *newton2(double x_re, double x_im,
   while (1) {
     
     if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
-                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+                ( fabs(x_re) > 10000000000. || fabs(x_im) > 10000000000. ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       if ( iter <= capIter ) {
 	*convergence = iter;
@@ -120,7 +120,7 @@ void *newton3(double x_re, double x_im,
 
   while (1) {
     if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
-                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+                ( fabs(x_re) > 10000000000. || fabs(x_im) > 10000000000. ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       if ( iter <= capIter ) {
 	*convergence = iter;
@@ -188,7 +188,7 @@ void *newton4(double x_re, double x_im,
 
   while (1) {
     if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
-                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+                ( fabs(x_re) > 10000000000. || fabs(x_im) > 10000000000. ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       if ( iter <= capIter ) {
 	*convergence = iter;
@@ -269,7 +269,7 @@ void *newton5(double x_re, double x_im,
 
   while (1) {
     if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
-                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+                ( fabs(x_re) > 10000000000. || fabs(x_im) > 10000000000. ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       if ( iter <= capIter ) {
 	*convergence = iter;
@@ -362,7 +362,7 @@ void *newton6(double x_re, double x_im,
 
   while (1) {
     if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
-                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+                ( fabs(x_re) > 10000000000. || fabs(x_im) > 10000000000. ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       if ( iter <= capIter ) {
 	*convergence = iter;
@@ -468,7 +468,7 @@ void *newton7(double x_re, double x_im,
 
   while (1) {
     if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
-                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+                ( fabs(x_re) > 10000000000. || fabs(x_im) > 10000000000. ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       if ( iter <= capIter ) {
 	*convergence = iter;
@@ -586,7 +586,7 @@ void *newton8(double x_re, double x_im,
 
   while (1) {
     if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
-                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+                ( fabs(x_re) > 10000000000. || fabs(x_im) > 10000000000. ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       if ( iter <= capIter ) {
 	*convergence = iter;
@@ -717,7 +717,7 @@ void *newton9(double x_re, double x_im,
 
   while (1) {
     if ( (x_re*x_re + x_im*x_im) < 0.000001 || //closer than 0.001 to origin
-                ( fabs(x_re) > 10000000000 || fabs(x_im) > 10000000000 ) ) { //real or imaginary part larger than 10^10
+                ( fabs(x_re) > 10000000000. || fabs(x_im) > 10000000000. ) ) { //real or imaginary part larger than 10^10
       *attractor = 9;
       if ( iter <= capIter ) {
 	*convergence = iter;
