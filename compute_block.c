@@ -14,18 +14,25 @@ void *compute_block( void *restrict arg ){
   extern int pic_size, n_threads;
   extern pthread_mutex_t item_done_mutex;
 
+  // precompute coordinates on complex plane:
+  double real_coords[pic_size], image_coords[pic_size];
+  for ( size_t ix = 0; ix < pic_size; ++ix )
+    { // Convert to [-2; 2] interval:
+      real_coords[ix] = -2 + (4./(double)(pic_size-1))*(ix);
+      image_coords[ix] = 2 - (4./(double)(pic_size-1))*(ix); 
+    }
+
   //perform newton iterations, attractor and convergence arrays as output
-  double re = 0, im = 0;
   for ( size_t ix = offset; ix < pic_size; ix += n_threads ){
     // the following 2 allocations will be freed in write_block.c:
     int* attractor_row = (int*) malloc(sizeof(int)*pic_size); 
     int* convergence_row = (int*) malloc(sizeof(int)*pic_size);
    
-    im = 2 - (4./(double)(pic_size-1))*(ix); // Convert to [-2; 2] interval.
-    for ( size_t jx = 0; jx < pic_size; ++jx ) {
-      re = -2 + (4./(double)(pic_size-1))*(jx);
-      newton_routine(re, im, &attractor_row[jx], &convergence_row[jx]);
-    }
+    for ( size_t jx = 0; jx < pic_size; ++jx )
+      {
+        newton_routine(real_coords[jx], image_coords[ix],
+                       &attractor_row[jx], &convergence_row[jx]);
+      }
     
     // Save results:
     attractor[ix] = attractor_row;
