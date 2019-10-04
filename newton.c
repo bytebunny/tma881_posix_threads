@@ -12,20 +12,19 @@ pthread_mutex_t item_done_mutex;
 
 int main(int argc, char *argv[])
 {
-  char *ptr, *ptr2; // pointers to parse input data.
+  char *ptr; // pointer to parse input data.
   size_t ix, tx; // loop indices.
 
   if ( argc == 4 ) {
     for ( ix = 1; ix < argc - 1; ++ix ){ // starts with 1 because 0 is the program name.
       ptr = strchr( argv[ix], 't');
-      if (ptr) n_threads = strtol(++ptr, &ptr2, 10);
+      if (ptr) n_threads = strtol(++ptr, NULL, 10);
       else{
 	ptr = strchr( argv[ix], 'l');
-	pic_size = strtol(++ptr, &ptr2, 10);
+	pic_size = strtol(++ptr, NULL, 10);
       }
     }
-    exponent = strtol(argv[argc - 1], &ptr2, 10);
-    printf("t is %d, l is %d, d is %d\n", n_threads, pic_size, exponent);
+    exponent = strtol(argv[argc - 1], NULL, 10);
   } else {
     printf("Missing arguments! Correct syntax is: newton -t#numberOfThreads# -l#numberOfLines# #degreeOfPolynomial# \n");
     exit(0);
@@ -47,8 +46,6 @@ int main(int argc, char *argv[])
   }
   
   ///////////////////// Write header of PPM files /////////////////////
-  //create colormap arrays - hardcoded for max 10 colors
-  const int atrColorMap[30] = { 158,1,66, 216,62,79, 244,109,67, 253,174,97, 254,224,139, 230,245,152, 171,221,164, 102,194,165, 50,136,189, 94,79,162  };
   FILE *atrfile;
   char filename[25];
   sprintf(filename, "newton_attractors_x%d.ppm", exponent);
@@ -96,7 +93,6 @@ int main(int argc, char *argv[])
   arg_write->result1 = attractor;
   arg_write->result2 = convergence;
   arg_write->completed_items = item_done;
-  arg_write->color_map = atrColorMap;
   arg_write->result1_file = atrfile;
   arg_write->result2_file = convfile;
   pthread_create( &write_thread, NULL, write_block, (void*)arg_write );

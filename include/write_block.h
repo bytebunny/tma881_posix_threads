@@ -10,7 +10,6 @@ struct write // Define a struct to pass arguments to compute_block()
   int **result1;
   int **result2;
   char *completed_items;
-  int *color_map;
   FILE *result1_file;
   FILE *result2_file;
 };
