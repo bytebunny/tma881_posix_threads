@@ -29,21 +29,6 @@ int main(int argc, char *argv[])
     printf("Missing arguments! Correct syntax is: newton -t#numberOfThreads# -l#numberOfLines# #degreeOfPolynomial# \n");
     exit(0);
   }
-
-  void* (*newton_routine)(double, double, int*, int*); // pointer to the specific newton function;
-  if ( exponent == 1 ) newton_routine = &newton1;
-  else if ( exponent == 2) newton_routine = &newton2;
-  else if ( exponent == 3) newton_routine = &newton3;
-  else if ( exponent == 4) newton_routine = &newton4;
-  else if ( exponent == 5) newton_routine = &newton5;
-  else if ( exponent == 6) newton_routine = &newton6;
-  else if ( exponent == 7) newton_routine = &newton7;
-  else if ( exponent == 8) newton_routine = &newton8;
-  else if ( exponent == 9) newton_routine = &newton9;
-  else {
-    printf("Exponent >= 10 is not supported yet. \n");
-    exit(1);
-  }
   
   ///////////////////// Write header of PPM files /////////////////////
   FILE *atrfile;
@@ -77,7 +62,6 @@ int main(int argc, char *argv[])
   for ( tx = 0;  tx < n_threads;  ++tx ){
     struct compute *arg = (struct compute *)malloc( sizeof(struct compute) );
     arg->thread_number = tx;
-    arg->newton_func = newton_routine;
     arg->result1 = attractor;
     arg->result2 = convergence;
     arg->completed_items = item_done;

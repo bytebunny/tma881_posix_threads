@@ -1,17 +1,18 @@
 #include <stdlib.h> // free()
 #include <pthread.h>
+#include <stdio.h>
 #include "compute_block.h"
+#include "newtonlib.h"
 
 
 void *compute_block( void *restrict arg ){
   size_t offset = ( (struct compute*)arg )->thread_number;
-  void* (*newton_routine)(double, double, int*, int*) = ( (struct compute*) arg )->newton_func;
   int** attractor = ( (struct compute*) arg )->result1;
   int** convergence = ( (struct compute*) arg )->result2;
   char* item_done = ( (struct compute*) arg )->completed_items;
   free(arg);
 
-  extern int pic_size, n_threads;
+  extern int pic_size, n_threads, exponent;
   extern pthread_mutex_t item_done_mutex;
 
   // precompute coordinates on complex plane:
@@ -30,8 +31,57 @@ void *compute_block( void *restrict arg ){
    
     for ( size_t jx = 0; jx < pic_size; ++jx )
       {
-        newton_routine(real_coords[jx], image_coords[ix],
-                       &attractor_row[jx], &convergence_row[jx]);
+        switch( exponent )
+          {
+          case 1:
+            newton1( real_coords[jx], image_coords[ix],
+                     &attractor_row[jx], &convergence_row[jx]);
+            break; // terminate switch statement.
+
+          case 2:
+            newton2( real_coords[jx], image_coords[ix],
+                     &attractor_row[jx], &convergence_row[jx]);
+            break; // terminate switch statement.
+            
+          case 3:
+            newton3( real_coords[jx], image_coords[ix],
+                     &attractor_row[jx], &convergence_row[jx]);
+            break; // terminate switch statement.
+            
+          case 4:
+            newton4( real_coords[jx], image_coords[ix],
+                     &attractor_row[jx], &convergence_row[jx]);
+            break; // terminate switch statement.
+
+          case 5:
+            newton5( real_coords[jx], image_coords[ix],
+                     &attractor_row[jx], &convergence_row[jx]);
+            break; // terminate switch statement.
+
+          case 6:
+            newton6( real_coords[jx], image_coords[ix],
+                     &attractor_row[jx], &convergence_row[jx]);
+            break; // terminate switch statement.
+
+          case 7:
+            newton7( real_coords[jx], image_coords[ix],
+                     &attractor_row[jx], &convergence_row[jx]);
+            break; // terminate switch statement.
+
+          case 8:
+            newton8( real_coords[jx], image_coords[ix],
+                     &attractor_row[jx], &convergence_row[jx]);
+            break; // terminate switch statement.
+
+          case 9:
+            newton9( real_coords[jx], image_coords[ix],
+                     &attractor_row[jx], &convergence_row[jx]);
+            break; // terminate switch statement.
+
+          default:
+            printf("Exponent >= 10 is not supported yet. \n");
+            exit(1);
+          }
       }
     
     // Save results:

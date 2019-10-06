@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS = -O3 -Wall -pthread -ffast-math -march=native
+CFLAGS = -O2 -Wall -pthread -march=native
 LIBS =  -lpthread
 # Directory to keep object files:
 ODIR = obj
@@ -15,7 +15,7 @@ all: newton
 $(ODIR)/%.o: %.c $(DEPS)
 	$(CC) -flto -c -o $@ $< $(CFLAGS) -I$(IDIR)
 
-newton: $(ODIR)/newton.o $(ODIR)/newtonlib.o $(ODIR)/compute_block.o $(ODIR)/write_block.o 
+newton: $(ODIR)/newton.o $(ODIR)/compute_block.o $(ODIR)/write_block.o 
 	$(CC) -flto -o $@ $^ $(CFLAGS) $(LIBS)
 
 
