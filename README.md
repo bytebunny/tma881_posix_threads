@@ -42,6 +42,9 @@ We will use Newton's method to practice programming with POSIX threads.
   with multiplying out the components explicitly and comparing it to the
   square of the tolerance, which is a known number.
 
+- **Avoid control locking**. If possible the `if-else` statements should be
+  avoided. For example, one does not need to check the value of `d` (exponent)
+  
 ***CONTINUE HERE WITH FUTHER CONCEPTS***
 
 ## Intended program layout

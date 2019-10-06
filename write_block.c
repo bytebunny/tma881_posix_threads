@@ -5,7 +5,6 @@
 #include <stdio.h> // FILE *, fwrite()
 #include "write_block.h"
 
-#include <stdio.h> // temp
 
 void *write_block( void *restrict arg ){
   int** attractor = ( (struct write*) arg )->result1;
@@ -60,12 +59,17 @@ void *write_block( void *restrict arg ){
       for ( size_t jx = 0; jx < pic_size; ++jx ) {
         // Attractor:
         int color_type = attractor_row[jx];
-        memcpy(&attra_char_colors[12 * jx], &charColor[12 * color_type], 12*sizeof(char));
+        memcpy( &attra_char_colors[12 * jx],
+                &charColor[12 * color_type], 12*sizeof(char));
 
         color_type = convergence_row[jx] - 1;
-        memcpy(&conv_char_colors[12 * jx], &charGreyColor[12 * color_type], 4*sizeof(char));
-        memcpy(&conv_char_colors[12 * jx + 4], &charGreyColor[12 * color_type], 4*sizeof(char));
-        memcpy(&conv_char_colors[12 * jx + 8], &charGreyColor[12 * color_type], 4*sizeof(char));
+
+        memcpy( &conv_char_colors[12 * jx],
+                &charGreyColor[4 * color_type], 4*sizeof(char));
+        memcpy( &conv_char_colors[12 * jx + 4],
+                &charGreyColor[4 * color_type], 4*sizeof(char));
+        memcpy( &conv_char_colors[12 * jx + 8],
+                &charGreyColor[4 * color_type], 4*sizeof(char));
       }
       attra_char_colors[12 * pic_size -1] = '\n';
       conv_char_colors[12 * pic_size -1] = '\n';
