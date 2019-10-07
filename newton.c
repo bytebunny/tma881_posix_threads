@@ -48,7 +48,6 @@ int main(int argc, char *argv[])
   fprintf(convfile,"255\n");
 
   //initialize attractor and convergence arrays before writing
-  //these are just dummy arrays now, filled with random roots now, they should be initialized for each compute thread
   int** attractor = (int**) malloc(sizeof(int*) * pic_size);
   int** convergence = (int**) malloc(sizeof(int*) * pic_size);
   char* item_done = (char*) calloc(pic_size, sizeof(char));
