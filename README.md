@@ -11,7 +11,7 @@ We will use Newton's method to practice programming with POSIX threads.
   done row by row, we will need to allocate memory for one row at a time.
   
 - **Writing to file**. Assignment 0 allowed to get insight into difference
-  in performance of varous ways of writing into file. It became evident that
+  in performance of various ways of writing into file. It became evident that
   using `fwrite()` rather than `fprintf()` can save a lot of time.
   
 - **Inlining**. In Assignment 1 we learned that providing additional
@@ -43,7 +43,7 @@ We will use Newton's method to practice programming with POSIX threads.
   `memcpy()` function when assigning colours to **attractor** (colourful image)
   and **convergence** (greyscale image) from arrays with precomputed colours.
   Also, further subdivision of computations into **blocks** did not enhance
-  the perforamnce of our program.
+  the performance of our program.
 
 
 ## Intended program layout
@@ -59,9 +59,9 @@ A flowchart of the progarm can be seen in the figure.
 The main function takes care of the following:
 
 + Parsing command line input to get the number of compute threads, number of pixels per line and the exponent of the polynomial 
-+ Allocating memory for the attractor, convergence, and item_done arrays (where the computation resuls are stored),
++ Allocating memory for the attractor, convergence, and item_done arrays (where the computation results are stored),
 + Opening the output files and writing the headers,
-+ Creating threads and mutex object for compute and write fucntions,
++ Creating threads and mutex object for compute and write functions,
 + Joining threads and destroying the mutex object,
 + Closing the output files and freeing allocated memory.
 
