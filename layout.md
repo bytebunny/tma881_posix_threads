@@ -8,7 +8,7 @@ The main function has four main subtasks.
 
 + Receiving the total threads number, the pixels number, and the exponent number through the arguments.
 + Initializing the attractor, convergence, and item_done arrays.
-+ Declaring and initializing mutex threads, and creating p_threads of compute fucntion and write function.
++ Declaring and initializing mutex, and creating p_threads of compute fucntion and write function.
 + Joining p_threads and destoring mutex threads.
 
 The subtasks are shown in the figure.
