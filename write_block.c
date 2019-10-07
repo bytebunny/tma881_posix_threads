@@ -37,11 +37,10 @@ void *write_block( void *restrict arg ){
   sleep_timespec.tv_sec = 0;
   sleep_timespec.tv_nsec = 100000; // sleep 100 microseconds.
 
-//  unsigned short greyDegree;
   char attra_char_colors[12 * pic_size];
   char conv_char_colors[12 * pic_size];
 
-  for ( size_t ix = 0; ix < pic_size; ) { // NOTE: emptry increment statement!
+  for ( size_t ix = 0; ix < pic_size; ) { // NOTE: empty increment statement!
     pthread_mutex_lock(&item_done_mutex);
     if ( item_done[ix] != 0 ) // copy data from item_done to item_done_loc:
       memcpy(item_done_loc, item_done, pic_size*sizeof(char));

@@ -48,25 +48,52 @@ We will use Newton's method to practice programming with POSIX threads.
 
 ## Intended program layout
 
-Per instructions the program naturally splits into two subtasks: The
-computation of the Newton iteration and the writing of results to the two
-output files. Each of them will be implemented in a separate function, that are
-intended to be run as the main function of corresponding POSIX threads.
+The program thus consists of three central functions:  the main function, the compute function, and the write function.
+Due to the nature of the problem, the program naturally splits into two subtasks: 
+the computation of the Newton iteration and the writing of results to the two output files. 
+Multiple threads are used for computation of the Newton iterations, while only one thread is used for writing the results to the files.
+A flowchart of the progarm can be seen in the figure.
+![flow chart](./flowchart.jpg) 
 
-The computation of the Newton iteration can be further split up into
-***INSERT***
+### Main function
+The main function takes care of the following:
 
-As for the writing to file, we have identified ***INSERT*** independent
-subtasks. ***INSERT***
++ Parsing command line input to get the number of compute threads, number of pixels per line and the exponent of the polynomial 
++ Allocating memory for the attractor, convergence, and item_done arrays (where the computation resuls are stored),
++ Opening the output files and writing the headers,
++ Creating threads and mutex object for compute and write fucntions,
++ Joining threads and destroying the mutex object,
++ Closing the output files and freeing allocated memory.
 
-***CONTINUE BY FURTHER SPLITTING UP THE TWO TASKS***
 
-# Questions
+### Compute function
+Each compute thread calls the compute function for a specific row in the picture. 
+Within the compute function, the following is done:
 
-1. > Newton iteration does not converge for all points. To accomodate this, abort iteration if x_i is closer than 10^-3 to the origin, or if the absolute value of its real or imaginary part is bigger than 10^10. **In the pictures treat these cases as if there was an additional zero of f(x) to which these iterations converge.**???
-1. > One might be tempted to implement the writing as
-   `fprintf(attr_file, "%d %d %d ", COLOR_VALUE0, COLOR_VALUE1, COLOR_VALUE2);`
-   `fprintf(conv_file, "%d %d %d ", GRAY_VALUE, GRAY_VALUE, GRAY_VALUE);`
-   but recall that fprintf is slow; fwrite is a better solution.
-   
-   How to use `fwrite` to write ASCII?
++ Coordinates of each pixel in the current row are precomputed,
++ A corresponding newton iteration routine is called, depending on the exponent,
++ The results are put in the result arrays and the row is marked done.
+
+The newton iterations subroutine receives the coordinates of the pixel (its real and imaginary part), 
+and returns the attractor and convergence number. The attractor number ranges from 0 to 8, depending on the root number.
+In cases when the iterations did not converge (or the pixel was close to the origin), a dummy attractor value of 9 is assigned. 
+The convergence number (number of iterations) was returned directly for cases when it was lower than 100. 
+If it was larger, then the value 100 was returned.
+The numerical values of the real and complex roots for each polynomial were precomputed and 
+hardcoded for checking the convergence criteria. 
+In order to raise a complex number to a given power, a separate multiplication function was defined.
+
+
+
+### Write function
+The write function takes care of writing results into the files. As it runs concurrently with the computation, 
+it writes one row of the results whenever it is marked ready by one of the compute threads.
+More specifically, the function takes care of the following:
+
++ Predefinition of the colour maps for the attractor and convergence results,
++ Checking whether the row is marked done by one of the compute threads (if it's not done the function waits),
++ For each row: converting the Newton iterations results into the RGB triplet with help of the predefined colour maps,
++ Writes the whole row pixel data to the output files using `fwrite`.
+
+
+
