@@ -1,9 +1,9 @@
 CC=gcc
-CFLAGS = -O2 -Wall -pthread -march=native
+CFLAGS = -O3 -Wall -pthread -march=native
 LIBS =  -lpthread
 # Directory to keep object files:
-ODIR = obj
-IDIR = include
+ODIR = .
+IDIR = .
 
 _DEPS = newtonlib.h compute_block.h write_block.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
@@ -24,5 +24,5 @@ clean:
 	rm -rvf $(ODIR)/*.o newton *.ppm newton.tar.gz extracted/ pictures/
 
 test:
-	tar -czvf newton.tar.gz *
+	tar -czvf newton.tar.gz *.c *.h makefile
 	./check_submission.py newton.tar.gz
